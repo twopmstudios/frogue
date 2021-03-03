@@ -1,3 +1,3 @@
 (ns fae.state)
 
-(def state (volatile! nil))
+(def db (volatile! nil))

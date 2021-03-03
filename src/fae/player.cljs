@@ -1,4 +1,4 @@
-(ns fae.ship
+(ns fae.player
   (:require
    [fae.engine :as engine]
    [fae.grid :as grid]))

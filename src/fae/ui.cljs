@@ -68,7 +68,6 @@
       (.addChild graphics line))
     (set! (.-x button) (- (/ (:width @state) 2) 40))
     (set! (.-y button) (- (/ (:height @state) 2) 20))
-    (js/console.log (:width @state) (:height @state))
     (.addChild graphics button)
     (.addChild (:stage @state) graphics)
     state))

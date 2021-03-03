@@ -1,4 +1,4 @@
-(ns fae.force-field
+(ns fae.archive.force-field
   (:require
    [fae.engine :as engine]
    [fae.physics :as physics :refer [gravitational-acceleration-at-point]]))

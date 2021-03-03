@@ -2,12 +2,12 @@
   (:require
    [fae.assets :as assets]
    [fae.engine :as engine]
-   [fae.force-field :as force-field]
-   [fae.ship :as ship]
+   [fae.player :as player]
    [fae.world :as world]
    [fae.ui :as ui]
    [fae.state :as state]
    [fae.input :as input]
+   [fae.print :as print]
    [clojure.walk :refer [postwalk]]
    [reagent.core :as r]
    [cljsjs.pixi]
@@ -48,24 +48,23 @@
 (declare initial-state)
 
 (defn restart! []
-  (vswap! state/state assoc :game-state :stopped)
-  (engine/clear-stage @state/state)
-  (vswap! state/state
-          (fn [current-state]
-            (-> current-state
-                (merge (select-keys (initial-state) [:game-state :background :actors :foreground :vector-field])))))
-  (engine/init-scene state/state)
-  (engine/init-render-loop state/state)
-  (vswap! state/state assoc :game-state :started)
-  (.start (:ticker @state/state)))
+  (let [db state/db]
+    (vswap! db assoc :game-state :stopped)
+    (engine/clear-stage @db)
+    (vswap! db
+            (fn [current-state]
+              (-> current-state
+                  (merge (select-keys (initial-state) [:game-state :background :actors :foreground :vector-field])))))
+    (engine/init-scene db)
+    (engine/init-render-loop db)
+    (vswap! db assoc :game-state :started)
+    (.start (:ticker @db))))
 
 
 (defn update! [state]
   (when (engine/started? state)
     (-> state
         (update-actors))))
-
-
 
 ;; init
 
@@ -76,14 +75,11 @@
 
 (defn initial-state []
   {:score        0
-   :total-prizes 5
    :game-state   :stopped
-   :vector-field nil
-   :force-radius 20
    :update       update!
-   :background   [(force-field/instance) (world/instance)]
+   :background   [(world/instance)]
    :foreground   []
-   :actors       [(ship/instance state/state)]})
+   :actors       [(player/instance state/db)]})
 
 (defn init-state [state]
   (vreset! state (initial-state)))
@@ -102,23 +98,24 @@
                           :height (str height "px")}}])})))
 
 (defn game []
-  [canvas state/state scale dpi resolution])
+  [canvas state/db scale dpi resolution])
 
 ;; -------------------------
 ;; Initialize app
 
 
 (defn mount-root []
-  (println "! mounted")
+  (print/lifecycle "mounted")
   (input/attach-listeners)
-  (init-state state/state)
+  (init-state state/db)
   (r/render [game] (.getElementById js/document "app"))
-  (let [s (:stage @state/state)]
-    (js/console.log @state/state)
+  (let [s (:stage @state/db)]
+    (js/console.log @state/db)
     (. (. s -scale) set scale)))
 
 (defn init! []
-  (set! js/PIXI.settings.SCALE_MODE js/PIXI.SCALE_MODES.NEAREST)
+  (print/lifecycle "init")
+  (set! js/PIXI.settings.SCALE_MODE js/PIXI.SCALE_MODES.NEAREST) ;; allows chunky pixels
   (assets/load! mount-root))
 
 (defonce app (init!))

@@ -1,5 +1,6 @@
 (ns fae.engine
   (:require
+   [fae.print :as print]
    [clojure.walk :refer [prewalk]]
    [reagent.core :as r]))
 
@@ -205,7 +206,7 @@
           scaled-height (int (/ (.-height canvas) scale))
           stage  (init-stage)
           ticker (js/PIXI.ticker.Ticker.)]
-      (js/console.log "init-canvas (" scaled-width "," scaled-height ") @" scale "[" real-width "," real-height "]")
+      (print/lifecycle (str "init-canvas (" scaled-width "," scaled-height ")@" scale "x [" real-width "," real-height "]"))
       (vswap! state assoc
               :canvas canvas
               :width scaled-width
