@@ -3,13 +3,9 @@
    [fae.core :as core]
    [fae.archive.attractor :as attractor]
    [fae.archive.deathzone :as deathzone]
+   [fae.archive.force-field :as force-field]
    [fae.engine :as engine]
-   [fae.force-field :as force-field]
-   [fae.archive.prizes :as prizes]
-   [fae.ship :as ship]
    [fae.ui :as ui]
-   [clojure.walk :refer [postwalk]]
-   [reagent.core :as r]
    [cljsjs.pixi]
    [cljsjs.pixi-sound]))
 
