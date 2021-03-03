@@ -1,8 +1,8 @@
-(ns pixi.world
+(ns fae.world
   (:require
-   [pixi.engine :as engine]
-   [pixi.grid :as grid]
-   [pixi.physics :refer [gravitational-acceleration-at-point nearest-point]]))
+   [fae.engine :as engine]
+   [fae.grid :as grid]
+   [fae.physics :refer [gravitational-acceleration-at-point nearest-point]]))
 
 (defn world-icon []
   (doto (js/PIXI.Graphics.)

@@ -1,13 +1,13 @@
-(ns ^:figwheel-hooks pixi.core
+(ns ^:figwheel-hooks fae.core
   (:require
-   [pixi.assets :as assets]
-   [pixi.engine :as engine]
-   [pixi.force-field :as force-field]
-   [pixi.ship :as ship]
-   [pixi.world :as world]
-   [pixi.ui :as ui]
-   [pixi.state :as state]
-   [pixi.input :as input]
+   [fae.assets :as assets]
+   [fae.engine :as engine]
+   [fae.force-field :as force-field]
+   [fae.ship :as ship]
+   [fae.world :as world]
+   [fae.ui :as ui]
+   [fae.state :as state]
+   [fae.input :as input]
    [clojure.walk :refer [postwalk]]
    [reagent.core :as r]
    [cljsjs.pixi]

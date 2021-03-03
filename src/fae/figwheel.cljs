@@ -1,4 +1,4 @@
-(ns ^:figwheel-hooks pixi.figwheel)
+(ns ^:figwheel-hooks fae.figwheel)
 
 (defn ^:before-load my-before-reload-callback []
   (println "BEFORE reload!!!"))

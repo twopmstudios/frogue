@@ -1,4 +1,4 @@
-(ns pixi.physics)
+(ns fae.physics)
 
 
 (defn nearest-point [radius p]

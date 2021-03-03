@@ -1,4 +1,4 @@
-(ns pixi.core-test
+(ns fae.core-test
   (:require
    [cljs.test :refer-macros [deftest is testing]]))
 

@@ -1,7 +1,7 @@
-(ns pixi.force-field
+(ns fae.force-field
   (:require
-   [pixi.engine :as engine]
-   [pixi.physics :as physics :refer [gravitational-acceleration-at-point]]))
+   [fae.engine :as engine]
+   [fae.physics :as physics :refer [gravitational-acceleration-at-point]]))
 
 
 (defn draw-gravity-vector [graphics x y {:keys [force-radius vector-field]}]

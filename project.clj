@@ -1,4 +1,4 @@
-(defproject pixi "0.1.0-SNAPSHOT"
+(defproject fae "0.1.0-SNAPSHOT"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -18,7 +18,7 @@
   :aliases {"fig"       ["trampoline" "run" "-m" "figwheel.main"]
             "fig:build" ["trampoline" "run" "-m" "figwheel.main" "-b" "dev" "-r"]
             "fig:min"   ["run" "-m" "figwheel.main" "-O" "advanced" "-bo" "dev"]
-            "fig:test"  ["run" "-m" "figwheel.main" "-co" "test.cljs.edn" "-m" "pixi.test-runner"]}
+            "fig:test"  ["run" "-m" "figwheel.main" "-co" "test.cljs.edn" "-m" "faetest-runner"]}
 
   :profiles {:dev {:source-paths ["src" "env/dev/cljs"]
                    :dependencies [[com.bhauman/figwheel-main "0.2.12"]

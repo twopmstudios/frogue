@@ -1,4 +1,4 @@
-(ns pixi.assets)
+(ns fae.assets)
 
 
 (def paths

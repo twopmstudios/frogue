@@ -1,4 +1,4 @@
-(ns pixi.grid)
+(ns fae.grid)
 
 (def size 16)
 (defn snap-to-grid

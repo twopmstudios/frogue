@@ -1,5 +1,5 @@
-(ns pixi.archive.deathzone
-  (:require [pixi.engine :as engine]))
+(ns fae.archive.deathzone
+  (:require [fae.engine :as engine]))
 
 (defn color [r g b]
   (reduce (fn [acc n] (+ n (* 256 acc))) [r g b]))

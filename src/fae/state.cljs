@@ -1,3 +1,3 @@
-(ns pixi.state)
+(ns fae.state)
 
 (def state (volatile! nil))

@@ -1,4 +1,4 @@
-(ns pixi.events
+(ns fae.events
   (:require
    [clojure.walk :refer [postwalk]]))
 

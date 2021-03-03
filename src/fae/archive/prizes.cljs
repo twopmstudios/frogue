@@ -1,6 +1,6 @@
-(ns pixi.archive.prizes
+(ns fae.archive.prizes
   (:require
-   [pixi.engine :as engine]))
+   [fae.engine :as engine]))
 
 (defn color [r g b]
   (reduce (fn [acc n] (+ n (* 256 acc))) [r g b]))

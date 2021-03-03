@@ -1,13 +1,13 @@
-(ns pixi.archive.core
+(ns fae.archive.core
   (:require
-   [pixi.core :as core]
-   [pixi.archive.attractor :as attractor]
-   [pixi.archive.deathzone :as deathzone]
-   [pixi.engine :as engine]
-   [pixi.force-field :as force-field]
-   [pixi.archive.prizes :as prizes]
-   [pixi.ship :as ship]
-   [pixi.ui :as ui]
+   [fae.core :as core]
+   [fae.archive.attractor :as attractor]
+   [fae.archive.deathzone :as deathzone]
+   [fae.engine :as engine]
+   [fae.force-field :as force-field]
+   [fae.archive.prizes :as prizes]
+   [fae.ship :as ship]
+   [fae.ui :as ui]
    [clojure.walk :refer [postwalk]]
    [reagent.core :as r]
    [cljsjs.pixi]

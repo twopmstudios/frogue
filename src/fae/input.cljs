@@ -1,7 +1,7 @@
-(ns pixi.input
+(ns fae.input
   (:require
-   [pixi.events :as e]
-   [pixi.state :as s]))
+   [fae.events :as e]
+   [fae.state :as s]))
 
 ;; determine which key pressed, what event it triggers and call actor handlers
 (defn on-key-up! [ev]

@@ -1,4 +1,4 @@
-(ns pixi.engine
+(ns fae.engine
   (:require
    [clojure.walk :refer [prewalk]]
    [reagent.core :as r]))

@@ -1,6 +1,6 @@
-(ns pixi.ui
-  (:require [pixi.engine :as engine]
-            [pixi.archive.prizes :as prizes]))
+(ns fae.ui
+  (:require [fae.engine :as engine]
+            [fae.archive.prizes :as prizes]))
 
 (defn text-field [text size]
   (-> (js/PIXI.Text. text (js/PIXI.TextStyle.

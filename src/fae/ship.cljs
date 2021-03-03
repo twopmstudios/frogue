@@ -1,7 +1,7 @@
-(ns pixi.ship
+(ns fae.ship
   (:require
-   [pixi.engine :as engine]
-   [pixi.grid :as grid]))
+   [fae.engine :as engine]
+   [fae.grid :as grid]))
 
 (defn ship-icon []
   (doto (js/PIXI.Graphics.)

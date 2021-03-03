@@ -1,6 +1,6 @@
-(ns pixi.archive.attractor
+(ns fae.archive.attractor
   (:require
-   [pixi.engine :as engine]))
+   [fae.engine :as engine]))
 
 (defn vector-field-for-actor [state actor]
   (let [half-spacing (:force-radius state)
