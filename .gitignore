@@ -13,5 +13,6 @@ pom.xml
 .rebel_readline_history
 .lsp
 dist
+dist.zip
 resources/public/cljs-out
 .DS_Store
