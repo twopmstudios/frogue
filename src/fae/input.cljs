@@ -10,12 +10,15 @@
   )
 
 (defn on-key-down! [ev]
-  (let [key (.-key ev)]
+  (let [key (.-key ev)
+        dispatch (fn [event-name]
+                   (.preventDefault ev)
+                   (e/trigger-event! s/db event-name))]
     (case key
-      "ArrowUp" (e/trigger-event! s/db :move-up-pressed)
-      "ArrowDown" (e/trigger-event! s/db :move-down-pressed)
-      "ArrowRight" (e/trigger-event! s/db :move-right-pressed)
-      "ArrowLeft" (e/trigger-event! s/db :move-left-pressed)
+      "ArrowUp" (dispatch :move-up-pressed)
+      "ArrowDown" (dispatch :move-down-pressed)
+      "ArrowRight" (dispatch :move-right-pressed)
+      "ArrowLeft" (dispatch :move-left-pressed)
       nil)))
 
 (defn attach-listeners []
