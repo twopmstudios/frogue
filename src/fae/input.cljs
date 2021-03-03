@@ -5,8 +5,11 @@
    [fae.state :as s]))
 
 ;; determine which key pressed, what event it triggers and call actor handlers
-(defn on-key-up! [ev]
-  ;; (js/console.log "keyup" ev)
+(defn on-key-up! [_ev]
+  ;; (js/console.log "keyup" ev))
+  )
+
+(defn on-key-down! [ev]
   (let [key (.-key ev)]
     (case key
       "ArrowUp" (e/trigger-event! s/db :move-up-pressed)
@@ -15,12 +18,12 @@
       "ArrowLeft" (e/trigger-event! s/db :move-left-pressed)
       nil)))
 
-(defn on-key-down! [_ev])
-
 (defn attach-listeners []
   (print/events "> attached listeners")
-  (.addEventListener js/window "keyup" on-key-up!))
+  (.addEventListener js/window "keyup" on-key-up!)
+  (.addEventListener js/window "keydown" on-key-down!))
 
 (defn clear-listeners []
   (print/events "< cleared listeners")
-  (.removeEventListener js/window "keyup" on-key-up!))
+  (.removeEventListener js/window "keyup" on-key-up!)
+  (.removeEventListener js/window "keydown" on-key-down!))

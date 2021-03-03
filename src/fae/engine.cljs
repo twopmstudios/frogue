@@ -69,13 +69,15 @@
    (let [sprite (js/PIXI.Sprite. (load-texture resource-name))]
      (set-anchor sprite anchor-x anchor-y))))
 
-(defn set-graphics-position [{:keys [graphics x y velocity width height] :as entity}]
-  (when x (set! (.-x (.-position graphics)) x))
-  (when y (set! (.-y (.-position graphics)) y))
-  (when velocity (set! (.-rotation graphics) (js/Math.atan2 (:y velocity) (:x velocity))))
-  (when width (set! (.-width graphics) width))
-  (when height (set! (.-height graphics) height))
-  entity)
+(defn set-graphics-position [{:keys [graphics transform velocity width height] :as entity}]
+  (let [x (get-in transform [:position :x])
+        y (get-in transform [:position :y])]
+    (when x (set! (.-x (.-position graphics)) x))
+    (when y (set! (.-y (.-position graphics)) y))
+    (when velocity (set! (.-rotation graphics) (js/Math.atan2 (:y velocity) (:x velocity))))
+    (when width (set! (.-width graphics) width))
+    (when height (set! (.-height graphics) height))
+    entity))
 
 (defn sort-by-z-index [stage]
   (-> (.-children stage)

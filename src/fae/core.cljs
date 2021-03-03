@@ -20,7 +20,7 @@
    (fn [actors]
      (postwalk
       (fn [node]
-        (if (and (:graphics node) (:update node))
+        (if (and (:transform node) (:graphics node) (:update node))
           (let [updated-node ((:update node) node state)]
             (engine/set-graphics-position updated-node)
             updated-node)
