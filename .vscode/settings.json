@@ -1,0 +1,8 @@
+{
+  "search.exclude": {
+    "**/resources/public/cljs-out": true
+  },
+  "files.exclude": {
+    "**/resources/public/cljs-out/**": true
+  }
+}
