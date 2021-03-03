@@ -1,10 +1,14 @@
-# fae
+# fae.cljs
 
-FIXME: Write a one-line description of your library/project.
+A simple clojurescript game engine built on [pixi.js](https://github.com/pixijs/pixi.js/).
+
+Originally forked from https://github.com/yogthos/graviton.
 
 ## Overview
 
-FIXME: Write a paragraph about the library/project and highlight its goals.
+While options like [play-cljc](https://github.com/oakes/play-cljc) and [chocolatier](https://github.com/alexkehayias/chocolatier) exist and are robust options, we were seeking a lightweight & fast moving solution for cljs game development.
+
+So here we are.
 
 ## Development
 
@@ -32,6 +36,4 @@ To create a production build run:
 
 ## License
 
-Copyright © 2018 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at your option) any later version.
+Copyright © 2021 TwoPM Studios
