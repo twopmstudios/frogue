@@ -30,27 +30,29 @@
         curr-x (get-in p [:transform :position :x])
         curr-y (get-in p [:transform :position :y])
         x (+ curr-x (/ (- target-x curr-x) 5))
-        y (+ curr-y (/ (- target-y curr-y) 5))]
+        y (+ curr-y (/ (- target-y curr-y) 5))
+        rotation (get-in p [:transform :rotation])
+        rotation' (+ rotation 0.01)]
     (-> p
         (assoc-in [:transform :position :x] x)
-        (assoc-in [:transform :position :y] y))))
+        (assoc-in [:transform :position :y] y)
+        (assoc-in [:transform :rotation] rotation'))))
 
-(defn instance [_state]
+(defn instance [_state [x y]]
   {:id       :player
    :type     :player
-   :transform {:position {:x 0 :y 0}}
+   :transform {:position {:x 0 :y 0}
+               :rotation 15}
    :grid {:x 0 :y 0}
    :graphics (engine/sprite "at.png" [0 0])
    :velocity {:y 0 :x 0}
    :z-index  1
-   :init     (fn [p state]
-               (let [x (int (/ (:width state) grid/size 2))
-                     y (int (/ (:height state) grid/size 2))]
-                 (-> p
-                     (assoc-in [:grid :x] x)
-                     (assoc-in [:grid :y] y)
-                     (assoc-in [:transform :position :x] (* x grid/size))
-                     (assoc-in [:transform :position :y] (* y grid/size)))))
+   :init     (fn [p _state]
+               (-> p
+                   (assoc-in [:grid :x] x)
+                   (assoc-in [:grid :y] y)
+                   (assoc-in [:transform :position :x] (* x grid/size))
+                   (assoc-in [:transform :position :y] (* y grid/size))))
    :events {:move-up-pressed (fn [p _state] (move-grid p 0 -1))
             :move-down-pressed (fn [p _state] (move-grid p 0 1))
             :move-right-pressed (fn [p _state] (move-grid p 1 0))

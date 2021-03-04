@@ -4,6 +4,7 @@
    [fae.engine :as engine]
    [fae.player :as player]
    [fae.world :as world]
+   [fae.fps :as fps]
    [fae.ui :as ui]
    [fae.state :as state]
    [fae.input :as input]
@@ -79,7 +80,10 @@
    :update       update!
    :background   [(world/instance)]
    :foreground   []
-   :actors       [(player/instance state/db)]})
+   :actors       (reverse (concat [(fps/instance state/db [0 0])]
+                                  (flatten (for [x (range 0 10)]
+                                             (for [y (range 0 10)]
+                                               (player/instance state/db [x y]))))))})
 
 (defn init-state [state]
   (vreset! state (initial-state)))
