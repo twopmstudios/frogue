@@ -1,7 +1,6 @@
 (ns fae.engine
   (:require
    [fae.print :as print]
-   [clojure.walk :refer [prewalk]]
    [reagent.core :as r]))
 
 (defn load-texture [resource-name]

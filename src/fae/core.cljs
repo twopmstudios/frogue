@@ -7,26 +7,19 @@
    [fae.fps :as fps]
    [fae.ui :as ui]
    [fae.state :as state]
+   [fae.systems :as sys]
    [fae.input :as input]
    [fae.print :as print]
-   [clojure.walk :refer [postwalk]]
    [reagent.core :as r]
    [cljsjs.pixi]
    [cljsjs.pixi-sound]))
 
 (defn update-actors [state]
-  (update
-   state
-   :actors
-   (fn [actors]
-     (postwalk
-      (fn [node]
-        (if (and (:transform node) (:graphics node) (:update node))
-          (let [updated-node ((:update node) node state)]
-            (engine/set-graphics-position updated-node)
-            updated-node)
-          node))
-      actors))))
+  (let [state' (reduce (fn [state' state-sys] (sys/execute-state state' state-sys)) state sys/state)]
+    (doseq [effect-sys sys/effect]
+      (sys/execute-effect state effect-sys))
+
+    state'))
 
 (defn update-scene-objects [state]
   (doseq [{:keys [update] :as object} (into (:background state) (:foreground state))]
@@ -76,13 +69,14 @@
 
 (defn initial-state []
   {:score        0
+   :cancel-render false
    :game-state   :stopped
    :update       update!
    :background   [(world/instance)]
    :foreground   []
    :actors       (reverse (concat [(fps/instance state/db [0 0])]
-                                  (flatten (for [x (range 0 10)]
-                                             (for [y (range 0 10)]
+                                  (flatten (for [x (range 0 50)]
+                                             (for [y (range 0 20)]
                                                (player/instance state/db [x y]))))))})
 
 (defn init-state [state]

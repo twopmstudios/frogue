@@ -16,7 +16,9 @@
     (.endFill)))
 
 (defn update! [{text :graphics :as p} {ticker :ticker}]
-  (set! (.-text text) (.toFixed (.-FPS ticker) 2))
+  (set! (.-text text) (-> ticker
+                          .-FPS
+                          (.toFixed 2)))
   p)
 
 (defn instance [_state [x y]]
@@ -25,6 +27,7 @@
    :transform {:position {:x x :y y}}
    :graphics (ui/text-field "FPS" 8 "04b03")
    :z-index  1
-   :init     (fn [p _state] p)
+
    :events {}
+   :init     (fn [p _state] p)
    :update update!})

@@ -1,13 +1,11 @@
-(ns fae.events
-  (:require
-   [clojure.walk :refer [postwalk]]))
+(ns fae.events)
 
 (defn handle-event [state ev]
   (let [state' (update
                 state
                 :actors
                 (fn [actors]
-                  (postwalk
+                  (map
                    (fn [node]
                      (if (and (:events node) (get-in node [:events ev]))
                        (let [updated-node ((get-in node [:events ev]) node state)]
