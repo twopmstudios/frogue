@@ -48,8 +48,10 @@
    :transform {:position {:x 0 :y 0}
                :rotation 0}
    :grid {:x 0 :y 0}
-   :graphics (engine/sprite "at.png" [0 0])
-   :rotate-constantly true
+   :graphics (let [spr (engine/sprite "at.png" [0 0])]
+               (set! (.-tint spr) (rand-int 16rFFFFFF))
+               spr)
+   :rotate-constantly (/ (+ x y) 2000.0)
    :z-index  1
 
    :events {:move-up-pressed (fn [p _state] (move-grid p 0 -1))

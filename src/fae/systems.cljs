@@ -9,8 +9,9 @@
 
 (defn rotate-system [node _state]
   (if (:rotate-constantly node)
-    (let [rotation (get-in node [:transform :rotation])
-          rotation' (+ rotation 0.01)]
+    (let [rotate-speed (get node :rotate-constantly)
+          rotation (get-in node [:transform :rotation])
+          rotation' (+ rotation rotate-speed)]
       (-> node
           (assoc-in [:transform :rotation] rotation')))
 

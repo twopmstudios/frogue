@@ -76,7 +76,7 @@
    :foreground   []
    :actors       (reverse (concat [(fps/instance state/db [0 0])]
                                   (flatten (for [x (range 0 50)]
-                                             (for [y (range 0 20)]
+                                             (for [y (range 0 40)]
                                                (player/instance state/db [x y]))))))})
 
 (defn init-state [state]
