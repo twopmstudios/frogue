@@ -1,5 +1,6 @@
 (ns fae.ui
-  (:require [fae.engine :as engine]))
+  (:require [fae.engine :as engine]
+            [fae.sound :as sound]))
 
 (defn text-field [text size font]
   (-> (new js/PIXI.Text text (new js/PIXI.TextStyle
@@ -48,7 +49,8 @@
                                          (.removeChild (:stage @state) parent-graphics)
                                          (vswap! state assoc :game-state :started)
                                          (engine/add-stage-on-click-event state)
-                                         (engine/init-scene state))))]
+                                         (engine/init-scene state)
+                                         (sound/play! :boing))))]
     (set! (.-interactive graphics) true)
     (set! (.-buttonMode graphics) true)
     graphics))

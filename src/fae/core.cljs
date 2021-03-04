@@ -10,8 +10,10 @@
    [fae.systems :as sys]
    [fae.input :as input]
    [fae.print :as print]
+   [fae.sound :as sound]
    [reagent.core :as r]
-   [cljsjs.pixi]))
+   [cljsjs.pixi]
+   [cljsjs.pixi-sound]))
 
 (defn update-actors [state]
   (let [state' (reduce (fn [state' state-sys] (sys/execute-state state' state-sys)) state sys/state)]
@@ -113,7 +115,8 @@
 (defn init! []
   (print/lifecycle "init")
   (set! js/PIXI.settings.SCALE_MODE js/PIXI.SCALE_MODES.NEAREST) ;; allows chunky pixels
-  (assets/load! mount-root))
+  (assets/load! mount-root)
+  (sound/register!))
 
 (defonce app (init!))
 
