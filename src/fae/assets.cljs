@@ -14,7 +14,7 @@
   "Loads all files in assets.paths and calls done on completion"
   [done]
   (let [paths (map (fn [[_ v]] v) (into [] paths))
-        loader js/PIXI.loader]
+        loader (new js/PIXI.Loader)]
     (doseq [p paths]
       (. loader add p))
     (. loader load done)))

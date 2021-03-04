@@ -11,8 +11,7 @@
    [fae.input :as input]
    [fae.print :as print]
    [reagent.core :as r]
-   [cljsjs.pixi]
-   [cljsjs.pixi-sound]))
+   [cljsjs.pixi]))
 
 (defn update-actors [state]
   (let [state' (reduce (fn [state' state-sys] (sys/execute-state state' state-sys)) state sys/state)]

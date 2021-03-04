@@ -42,15 +42,18 @@
         (assoc-in [:transform :position :x] x)
         (assoc-in [:transform :position :y] y))))
 
+(defn build-sprite []
+  (let [spr (engine/sprite "at.png" [0 0])]
+    (set! (.-tint spr) (rand-int 16rFFFFFF))
+    spr))
+
 (defn instance [_state [x y]]
   {:id       :player
    :type     :player
    :transform {:position {:x 0 :y 0}
                :rotation 0}
    :grid {:x 0 :y 0}
-   :graphics (let [spr (engine/sprite "at.png" [0 0])]
-               (set! (.-tint spr) (rand-int 16rFFFFFF))
-               spr)
+   :graphics (build-sprite)
    :rotate-constantly (/ (+ x y) 2000.0)
    :z-index  1
 

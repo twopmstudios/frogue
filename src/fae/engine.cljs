@@ -4,7 +4,7 @@
    [reagent.core :as r]))
 
 (defn load-texture [resource-name]
-  (.fromImage (.-Texture js/PIXI) (str "assets/" resource-name)))
+  (.from (.-Texture js/PIXI) (str "assets/" resource-name)))
 
 (defn set-anchor [obj x y]
   (.set (.-anchor obj) x y)
@@ -65,7 +65,7 @@
 (defn sprite
   ([resource-name] (sprite resource-name [0.5 0.5]))
   ([resource-name [anchor-x anchor-y]]
-   (let [sprite (js/PIXI.Sprite. (load-texture resource-name))]
+   (let [sprite (new js/PIXI.Sprite (load-texture resource-name))]
      (set-anchor sprite anchor-x anchor-y))))
 
 (defn set-graphics-position [{:keys [graphics transform velocity width height] :as entity}]
@@ -101,10 +101,12 @@
     (remove-from-stage stage object)))
 
 (defn init-stage []
-  (js/PIXI.Container.))
+  (new js/PIXI.Container))
 
 (defn init-renderer [canvas width height]
-  (js/PIXI.autoDetectRenderer width height (clj->js {:view canvas})))
+  (js/PIXI.autoDetectRenderer (clj->js {:width width
+                                        :height height
+                                        :view canvas})))
 
 (defn render [renderer stage]
   (.render renderer stage))
@@ -192,8 +194,8 @@
 
 (defn add-stage-on-click-event [state]
   (let [{:keys [stage on-click on-drag width height]} @state]
-    (let [background-layer (js/PIXI.Container.)
-          hit-area         (js/PIXI.Rectangle. 0 0 width height)]
+    (let [background-layer (new js/PIXI.Container)
+          hit-area         (new js/PIXI.Rectangle 0 0 width height)]
       (set! (.-interactive background-layer) true)
       (set! (.-buttonMode background-layer) true)
       (set! (.-hitArea background-layer) hit-area)
@@ -211,7 +213,7 @@
           scaled-width  (int (/ (.-width canvas) scale))
           scaled-height (int (/ (.-height canvas) scale))
           stage  (init-stage)
-          ticker (js/PIXI.ticker.Ticker.)]
+          ticker (new js/PIXI.Ticker)]
       (print/lifecycle (str "init-canvas (" scaled-width "," scaled-height ")@" scale "x [" real-width "," real-height "]"))
       (vswap! state assoc
               :canvas canvas

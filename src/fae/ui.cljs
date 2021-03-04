@@ -2,10 +2,10 @@
   (:require [fae.engine :as engine]))
 
 (defn text-field [text size font]
-  (-> (js/PIXI.Text. text (js/PIXI.TextStyle.
-                           #js {:fill       "#FF00FF"
-                                :fontSize   size
-                                :fontFamily font}))))
+  (-> (new js/PIXI.Text text (new js/PIXI.TextStyle
+                                  #js {:fill       "#FF00FF"
+                                       :fontSize   size
+                                       :fontFamily font}))))
 
 (defn text-box [{:keys [text x y]}]
   {:x        x
@@ -16,7 +16,7 @@
 
 (defn button [{:keys [label on-click x y width height]}]
   (let [text   (engine/set-anchor (text-field label 30 "Arial") 0.5 0.5)
-        button (doto (js/PIXI.Graphics.)
+        button (doto (new js/PIXI.Graphics)
                  (.addChild (do
                               (set! (.-x text) (/ width 2))
                               (set! (.-y text) (/ height 2))
@@ -38,7 +38,7 @@
      :update   (fn [])}))
 
 (defn start-button [state parent-graphics]
-  (let [graphics (doto (js/PIXI.Graphics.)
+  (let [graphics (doto (new js/PIXI.Graphics)
                    (.lineStyle 2 0xFF00FF 1)
                    (.beginFill 0xFF00BB 0.25)
                    (.drawRoundedRect -10 -3 120 40 15)
@@ -54,7 +54,7 @@
     graphics))
 
 (defn help-menu [state]
-  (let [graphics     (js/PIXI.Graphics.)
+  (let [graphics     (new js/PIXI.Graphics)
         text-lines   ["Welcome"]
         instructions (map-indexed (fn [idx text]
                                     (let [text (text-field text 15 "Arial")]

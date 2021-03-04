@@ -6,7 +6,7 @@
    [fae.grid :as grid]))
 
 (defn ship-icon []
-  (doto (js/PIXI.Graphics.)
+  (doto (new js/PIXI.Graphics)
     (.beginFill 0x3355ff 0.5)
     (.lineStyle 3 0xFF5500)
     (.moveTo -12.5 -10)
@@ -16,8 +16,7 @@
     (.endFill)))
 
 (defn update! [{text :graphics :as p} {ticker :ticker}]
-  (set! (.-text text) (-> ticker
-                          .-FPS
+  (set! (.-text text) (-> (aget ticker "FPS")
                           (.toFixed 2)))
   p)
 
