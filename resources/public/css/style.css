@@ -1,4 +1,12 @@
-/* some style */
+@font-face {
+  font-family: '04b03';
+  src:url('../assets/fonts/04b03.ttf.woff') format('woff'),
+      url('../assets/fonts/04b03.ttf.svg#04b03') format('svg'),
+      url('../assets/fonts/04b03.ttf.eot'),
+      url('../assets/fonts/04b03.ttf.eot?#iefix') format('embedded-opentype'); 
+  font-weight: normal;
+  font-style: normal;
+}
 
 html,
 body {

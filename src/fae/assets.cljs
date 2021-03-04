@@ -4,7 +4,11 @@
 (def paths
   {:at "assets/at.png"
    :dot "assets/dot.png"
-   :ship  "assets/ship.gif"})
+   :ship  "assets/ship.gif"
+   :fnt "assets/fonts/04b03.ttf.woff"
+   :fnt-1 "assets/fonts/04b03.ttf.svg#04b03"
+   :fnt-2 "assets/fonts/04b03.ttf.eot"
+   :fnt-3 "assets/fonts/04b03.ttf.eot?#iefix"})
 
 (defn load!
   "Loads all files in assets.paths and calls done on completion"
