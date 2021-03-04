@@ -153,6 +153,9 @@
           (when (started? @state)
             (vswap! state #((:update %) (assoc % :delta delta)))))))
 
+(defn cancel-render-loop [state]
+  (.destroy (:ticker @state)))
+
 (defn add-drag-start-event [object handler]
   (if handler
     (doto object

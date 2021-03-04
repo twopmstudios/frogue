@@ -125,8 +125,8 @@
 (defonce app (init!))
 
 (defn ^:before-load my-before-reload-callback []
-  (input/clear-listeners))
+  (input/clear-listeners)
+  (engine/cancel-render-loop state/db))
 
 (defn ^:after-load my-after-reload-callback []
-
   (mount-root))
