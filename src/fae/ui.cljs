@@ -1,22 +1,21 @@
 (ns fae.ui
-  (:require [fae.engine :as engine]
-            [fae.archive.prizes :as prizes]))
+  (:require [fae.engine :as engine]))
 
-(defn text-field [text size]
+(defn text-field [text size font]
   (-> (js/PIXI.Text. text (js/PIXI.TextStyle.
                            #js {:fill       "#FF00FF"
                                 :fontSize   size
-                                :fontFamily "Arial"}))))
+                                :fontFamily font}))))
 
 (defn text-box [{:keys [text x y]}]
   {:x        x
    :y        y
-   :graphics (text-field text 30)
+   :graphics (text-field text 30 "Arial")
    :init     (fn [text state] text)
    :update   (fn [])})
 
 (defn button [{:keys [label on-click x y width height]}]
-  (let [text   (engine/set-anchor (text-field label 30) 0.5 0.5)
+  (let [text   (engine/set-anchor (text-field label 30 "Arial") 0.5 0.5)
         button (doto (js/PIXI.Graphics.)
                  (.addChild (do
                               (set! (.-x text) (/ width 2))
@@ -44,7 +43,7 @@
                    (.beginFill 0xFF00BB 0.25)
                    (.drawRoundedRect -10 -3 120 40 15)
                    (.endFill)
-                   (.addChild (text-field "START" 30))
+                   (.addChild (text-field "START" 30 "Arial"))
                    (.on "pointerdown" #(do
                                          (.removeChild (:stage @state) parent-graphics)
                                          (vswap! state assoc :game-state :started)
@@ -58,7 +57,7 @@
   (let [graphics     (js/PIXI.Graphics.)
         text-lines   ["Welcome"]
         instructions (map-indexed (fn [idx text]
-                                    (let [text (text-field text 15)]
+                                    (let [text (text-field text 15 "Arial")]
                                       (set! (.-x text) 50)
                                       (set! (.-y text) (* 30 (inc idx)))
                                       text))
