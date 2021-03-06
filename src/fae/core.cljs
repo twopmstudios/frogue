@@ -4,6 +4,7 @@
    [fae.engine :as engine]
    [fae.entities.player :as player]
    [fae.entities.gnat :as gnat]
+   [fae.entities.mosquito :as mosquito]
    [fae.entities :as entities]
    [fae.world :as world]
    [fae.fps :as fps]
@@ -14,6 +15,7 @@
    [fae.input :as input]
    [fae.print :as print]
    [fae.sound :as sound]
+   [fae.util :as util]
    [reagent.core :as r]
    [cljsjs.pixi]
    [cljsjs.pixi-sound]))
@@ -59,14 +61,9 @@
     (vswap! db assoc :game-state :started)
     (.start (:ticker @db))))
 
-(defn in?
-  "true if coll contains elm"
-  [coll elm]
-  (boolean (some #(= elm %) coll)))
-
 
 (defn remove-actors [state to-remove]
-  (update state :actors (partial filter (fn [a] (not (in? to-remove (:id a)))))))
+  (update state :actors (partial filter (fn [a] (not (util/in? to-remove (:id a)))))))
 
 (defn add-actors [state to-add]
   (let [added (map (fn [a] (engine/add-actor-to-stage state a)) to-add)]
@@ -110,7 +107,7 @@
    :foreground   []
    :actors       [(fps/instance state/db [0 0])
                   (player/instance state/db [10 10])
-                  ;; (gnat/instance state/db [5 5])
+                  (mosquito/instance state/db [12 4])
                   (gnat/instance state/db [8 2])]})
 
 (defn init-state [state]

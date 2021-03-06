@@ -9,6 +9,11 @@
         matches (filter (fn [node] (= (:id node) id)) actors)]
     (first matches)))
 
+(defn get-by-type [type]
+  (let [actors (:actors @state/db)
+        matches (filter (fn [node] (= (:type node) type)) actors)]
+    (first matches)))
+
 (defn add-entity! [e]
   ;; add to state vector
   ;; add to stage

@@ -18,14 +18,10 @@
     (.lineTo -12.5 -10)
     (.endFill)))
 
-(defn move [{{:keys [position]} :transform :as player} x y]
-  (-> player
-      (assoc-in [:transform :position :x] (+ (:x position) x))
-      (assoc-in [:transform :position :y] (+ (:y position) y))))
+
 
 (defn move-grid [player state x y]
   (e/trigger-event! :move-tick)
-
   (move/move-grid player state x y))
 
 (defn raycast [[ox oy] state dir length]
@@ -55,6 +51,7 @@
         curr-pos (get p :grid)
         new-pos {:x (+ (:x curr-pos) tx) :y (+ (:y curr-pos) ty)}]
 
+    (e/trigger-event! :move-tick)
     (println "tongue" new-pos)
     (when-let [target (raycast [(:x curr-pos) (:y curr-pos)] state dir tongue)]
       (println "licked" (:id target) target)
@@ -65,27 +62,13 @@
         (assoc-in [:tongue :active] true)
         (assoc-in [:tongue :target] new-pos))))
 
-(defn init! [[x y] p _state]
-  (-> p
-      (assoc-in [:grid :x] x)
-      (assoc-in [:grid :y] y)
-      (assoc-in [:transform :position :x] (* x grid/size))
-      (assoc-in [:transform :position :y] (* y grid/size))))
+(defn init! [pos p _state] (move/set-initial-position p pos))
 
-(defn update! [p _state]
-  (let [target-x (* grid/size (get-in p [:grid :x]))
-        target-y (* grid/size (get-in p [:grid :y]))
-        curr-x (get-in p [:transform :position :x])
-        curr-y (get-in p [:transform :position :y])
-        x (+ curr-x (/ (- target-x curr-x) 5))
-        y (+ curr-y (/ (- target-y curr-y) 5))]
-    (-> p
-        (assoc-in [:transform :position :x] x)
-        (assoc-in [:transform :position :y] y))))
+(defn update! [p _state] (move/smooth-move p))
 
 (defn build-sprite []
   (let [spr (engine/sprite "at.png" [0 0])]
-    ;; (set! (.-tint spr) (rand-int 16rFFFFFF))
+    (set! (.-tint spr) (rand-int 16rFFFFFF))
     spr))
 
 (defn instance [_state [x y]]
@@ -100,7 +83,7 @@
    :tongue {:active false
             :target {:x 0 :y 0}}
 
-   :stats {:egg 200
+   :stats {:eggs 200
            :size 10
            :lick 2
            :tongue 2}
@@ -119,9 +102,20 @@
             :tongue-left-pressed (fn [p state] (shoot-tongue p state :left))
             :tongue-right-pressed (fn [p state] (shoot-tongue p state :right))
 
+            :damaged (fn [g state {id :id
+                                   amount :amount}]
+                       (if (= id (:id g))
+                         (let [pierced (- (get-in g [:stats :size]) amount)]
+                           (println "pierced" pierced)
+                           (if (< pierced 0)
+                             (-> g
+                                 (assoc-in [:stats :size] 0)
+                                 (update-in [:stats :eggs] (fn [e] (+ e pierced))))
+                             (assoc-in g [:stats :size] pierced)))
+                         g))
+
             :bump (fn [g state {bumpee :bumpee
                                 effects :effects}]
-                    (println "XXX")
                     (if (= bumpee (:id g))
                       (move/bumped g effects)
                       g))}

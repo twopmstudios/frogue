@@ -95,7 +95,6 @@
     actor))
 
 (defn remove-actor-from-stage [stage actor]
-  (println "gfx" (:graphics actor))
   (.removeChild stage (:graphics actor)))
 
 (defn clear-stage [{:keys [background actors foreground stage]}]
