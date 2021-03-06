@@ -30,18 +30,35 @@
       (assoc-in [:grid :x] (+ (:x grid) x))
       (assoc-in [:grid :y] (+ (:y grid) y))))
 
+(defn raycast [[ox oy] state dir length]
+  (let [first-hit (fn [f range] (first (filter some? (map f range))))
+        r (case dir
+            :up (reverse (range (- oy length) oy))
+            :down (range (inc oy) (+ (inc oy) length))
+            :left (reverse (range (- ox length) ox))
+            :right (range (inc ox) (+ (inc ox) length)))]
+
+    (println "raycast" [ox oy] dir r)
+
+    (case dir
+      :up  (first-hit (fn [i] (move/get-actor-at state ox i)) r)
+      :down (first-hit (fn [i] (move/get-actor-at state ox i)) r)
+      :left (first-hit (fn [i] (move/get-actor-at state i oy)) r)
+      :right (first-hit (fn [i] (move/get-actor-at state i oy)) r))))
+
 (defn shoot-tongue [p state dir]
-  (let [[tx ty] (case dir
-                  :up [0 -1]
-                  :down [0 1]
-                  :left [-1 0]
-                  :right [1 0])
+  (let [tongue (get-in p [:stats :tongue])
+        [tx ty] (case dir
+                  :up [0 (- tongue)]
+                  :down [0 tongue]
+                  :left [(- tongue) 0]
+                  :right [tongue 0])
+
         curr-pos (get p :grid)
         new-pos {:x (+ (:x curr-pos) tx) :y (+ (:y curr-pos) ty)}]
 
-
     (println "tongue" new-pos)
-    (when-let [target (move/get-actor-at state (:x new-pos) (:y new-pos))]
+    (when-let [target (raycast [(:x curr-pos) (:y curr-pos)] state dir tongue)]
       (println "licked" (:id target) target)
       (e/trigger-event! :licked-target {:id (:id target)
                                         :dmg (get-in p [:stats :lick])}))
@@ -85,7 +102,9 @@
    :tongue {:active false
             :target {:x 0 :y 0}}
 
-   :stats {:lick 2}
+   :stats {:egg 200
+           :lick 2
+           :tongue 2}
 
    :inbox []
    :events {:move-up-pressed (fn [p _state] (move-grid p 0 -1))
@@ -93,6 +112,9 @@
             :move-right-pressed (fn [p _state] (move-grid p 1 0))
             :move-left-pressed (fn [p _state] (move-grid p -1 0))
 
-            :tongue-up-pressed (fn [p state] (shoot-tongue p state :up))}
+            :tongue-up-pressed (fn [p state] (shoot-tongue p state :up))
+            :tongue-down-pressed (fn [p state] (shoot-tongue p state :down))
+            :tongue-left-pressed (fn [p state] (shoot-tongue p state :left))
+            :tongue-right-pressed (fn [p state] (shoot-tongue p state :right))}
    :init   (partial init! [x y])
    :update update!})
