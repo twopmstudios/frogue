@@ -1,18 +1,8 @@
-(ns fae.player
+(ns fae.entities.gnat
   (:require
    [fae.engine :as engine]
    [fae.print :as print]
    [fae.grid :as grid]))
-
-(defn ship-icon []
-  (doto (new js/PIXI.Graphics)
-    (.beginFill 0x3355ff 0.5)
-    (.lineStyle 3 0xFF5500)
-    (.moveTo -12.5 -10)
-    (.lineTo 12.5 0)
-    (.lineTo -12.5 10)
-    (.lineTo -12.5 -10)
-    (.endFill)))
 
 (defn move [{{:keys [position]} :transform :as player} x y]
   (-> player
@@ -43,23 +33,39 @@
         (assoc-in [:transform :position :y] y))))
 
 (defn build-sprite []
-  (let [spr (engine/sprite "at.png" [0 0])]
-    (set! (.-tint spr) (rand-int 16rFFFFFF))
-    spr))
+  (engine/sprite "gnat.png" [0 0]))
 
 (defn instance [_state [x y]]
-  {:id       :player
-   :type     :player
+  {:id       :gnat
+   :type     :gnat
+
    :transform {:position {:x 0 :y 0}
                :rotation 0}
+
+   :stats {:speed 1.5}
+   :movement {:meter 0}
+
    :grid {:x 0 :y 0}
    :graphics (build-sprite)
-   :rotate-constantly (/ (+ x y) 2000.0)
+  ;;  :rotate-constantly (/ (+ x y) 2000.0)
    :z-index  1
 
-   :events {:move-up-pressed (fn [p _state] (move-grid p 0 -1))
-            :move-down-pressed (fn [p _state] (move-grid p 0 1))
-            :move-right-pressed (fn [p _state] (move-grid p 1 0))
-            :move-left-pressed (fn [p _state] (move-grid p -1 0))}
+   :inbox []
+   :events {:move-tick (fn [g _state]
+                         ;; add speed to movement meter
+                         ;; use integer meter value to move
+                         ;; carry over floating part
+                         (let [g' (update-in g [:movement :meter]
+                                             (fn [m] (+ m (get-in g [:stats :speed]))))
+                               meter' (get-in g' [:movement :meter])
+                               movement (js/Math.floor meter')
+                               meter'' (- meter' movement)
+                               g'' (assoc-in g' [:movement :meter] meter'')]
+
+                           (print/debug (str meter'' "," movement))
+
+                           (if (> movement 0)
+                             (update-in g'' [:grid :x] (fn [x] (+ x movement)))
+                             g'')))}
    :init   (partial init! [x y])
    :update update!})

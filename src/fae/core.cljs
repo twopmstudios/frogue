@@ -2,12 +2,14 @@
   (:require
    [fae.assets :as assets]
    [fae.engine :as engine]
-   [fae.player :as player]
+   [fae.entities.player :as player]
+   [fae.entities.gnat :as gnat]
    [fae.world :as world]
    [fae.fps :as fps]
    [fae.ui :as ui]
    [fae.state :as state]
    [fae.systems :as sys]
+   [fae.events :as events]
    [fae.input :as input]
    [fae.print :as print]
    [fae.sound :as sound]
@@ -19,6 +21,8 @@
   (let [state' (reduce (fn [state' state-sys] (sys/execute-state state' state-sys)) state sys/state)]
     (doseq [effect-sys sys/effect]
       (sys/execute-effect state effect-sys))
+
+    (events/clear-inbox!)
 
     state'))
 
@@ -75,10 +79,11 @@
    :update       update!
    :background   [(world/instance)]
    :foreground   []
-   :actors       (reverse (concat [(fps/instance state/db [0 0])]
-                                  (flatten (for [x (range 0 50)]
-                                             (for [y (range 0 40)]
-                                               (player/instance state/db [x y]))))))})
+   :actors       [(fps/instance state/db [0 0])
+                  (player/instance state/db [10 10])
+                  (gnat/instance state/db [5 5])
+                  (gnat/instance state/db [8 2])
+                  (gnat/instance state/db [5 5])]})
 
 (defn init-state [state]
   (vreset! state (initial-state)))

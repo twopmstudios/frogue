@@ -1,5 +1,7 @@
 (ns fae.systems
-  (:require [fae.engine :as engine]))
+  (:require [fae.engine :as engine]
+            [fae.events :as events]
+            [fae.print :as print]))
 
 (defn update-system [node state]
   (if (:update node)
@@ -17,11 +19,24 @@
 
     node))
 
+(defn event-processing-system [node state]
+  ;; (println "node->events" (:events node))
+  ;; (println "node->inbox" (:inbox node))
+
+  (let [node' (reduce (fn [acc ev]
+                        (if-let [handler (get-in node [:events ev])]
+                          (handler node acc)
+                          acc))
+                      node
+                      @events/inbox)]
+
+    node'))
+
 (defn graphics-system [node _state]
   (when (and (:transform node) (:graphics node))
     (engine/set-graphics-position node)))
 
-(def state [update-system rotate-system])
+(def state [update-system rotate-system event-processing-system])
 (def effect [graphics-system])
 
 (defn execute-state [state system]

@@ -1,19 +1,15 @@
-(ns fae.events)
+(ns fae.events
+  (:require [fae.print :as print]))
 
-(defn handle-event [state ev]
-  (let [state' (update
-                state
-                :actors
-                (fn [actors]
-                  (map
-                   (fn [node]
-                     (if (and (:events node) (get-in node [:events ev]))
-                       (let [updated-node ((get-in node [:events ev]) node state)]
-                         updated-node)
-                       node))
-                   actors)))]
-    ;; (js/console.log state')
-    state'))
+(def inbox (volatile! []))
+
+(defn clear-inbox! []
+  (vreset! inbox []))
+
+(defn handle-event [_state ev]
+  (vswap! inbox (fn [i] (conj i ev))))
 
 (defn trigger-event! [state ev]
-  (vswap! state #(handle-event % ev)))
+  (print/debug (str "trigger:" ev))
+  (handle-event state ev))
+

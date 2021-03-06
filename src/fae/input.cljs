@@ -19,6 +19,7 @@
       "ArrowDown" (dispatch :move-down-pressed)
       "ArrowRight" (dispatch :move-right-pressed)
       "ArrowLeft" (dispatch :move-left-pressed)
+      "q" (dispatch :move-tick)
       nil)))
 
 (defn attach-listeners []
