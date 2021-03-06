@@ -58,7 +58,7 @@
                :rotation 0}
 
    :stats {:hp 5
-           :speed 0.7}
+           :speed 0.5}
    :movement {:meter 0
               :move-fn handle-movement}
 

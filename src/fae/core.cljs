@@ -108,7 +108,10 @@
    :actors       [(fps/instance state/db [0 0])
                   (player/instance state/db [10 10])
                   (mosquito/instance state/db [12 4])
-                  (gnat/instance state/db [8 2])]})
+                  (mosquito/instance state/db [2 8])
+                  (gnat/instance state/db [8 2])
+                  (gnat/instance state/db [9 3])
+                  (gnat/instance state/db [3 3])]})
 
 (defn init-state [state]
   (vreset! state (initial-state))
