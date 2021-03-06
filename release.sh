@@ -15,6 +15,6 @@ echo "packaging..."
 zip -r dist.zip ./dist
 
 echo "uploading..."
-butler push dist.zip twopm/faecljs:web
+butler push dist.zip twopm/frogue:web
 
 echo "done!"
