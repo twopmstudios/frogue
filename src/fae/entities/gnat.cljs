@@ -40,9 +40,9 @@
 (defn build-sprite []
   (engine/sprite "gnat.png" [0 0]))
 
-(defn handle-movement [g _state movement]
+(defn handle-movement [g state movement]
   (if (> movement 0)
-    (update-in g [:grid :x] (fn [x] (+ x movement)))
+    (move/move-grid g state movement 0)
     g))
 
 (defn handle-lick [g dmg]

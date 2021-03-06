@@ -23,12 +23,10 @@
       (assoc-in [:transform :position :x] (+ (:x position) x))
       (assoc-in [:transform :position :y] (+ (:y position) y))))
 
-(defn move-grid [{:keys [grid] :as player} x y]
+(defn move-grid [player state x y]
   (e/trigger-event! :move-tick)
 
-  (-> player
-      (assoc-in [:grid :x] (+ (:x grid) x))
-      (assoc-in [:grid :y] (+ (:y grid) y))))
+  (move/move-grid player state x y))
 
 (defn raycast [[ox oy] state dir length]
   (let [first-hit (fn [f range] (first (filter some? (map f range))))
@@ -107,10 +105,10 @@
            :tongue 2}
 
    :inbox []
-   :events {:move-up-pressed (fn [p _state] (move-grid p 0 -1))
-            :move-down-pressed (fn [p _state] (move-grid p 0 1))
-            :move-right-pressed (fn [p _state] (move-grid p 1 0))
-            :move-left-pressed (fn [p _state] (move-grid p -1 0))
+   :events {:move-up-pressed (fn [p state] (move-grid p state 0 -1))
+            :move-down-pressed (fn [p state] (move-grid p state 0 1))
+            :move-right-pressed (fn [p state] (move-grid p state 1 0))
+            :move-left-pressed (fn [p state] (move-grid p state -1 0))
 
             :tongue-up-pressed (fn [p state] (shoot-tongue p state :up))
             :tongue-down-pressed (fn [p state] (shoot-tongue p state :down))
