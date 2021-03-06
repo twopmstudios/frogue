@@ -16,3 +16,4 @@ dist
 dist.zip
 resources/public/cljs-out
 .DS_Store
+.calva
