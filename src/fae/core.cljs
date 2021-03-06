@@ -19,13 +19,12 @@
    [cljsjs.pixi-sound]))
 
 (defn update-actors [state]
-  (let [state' (reduce (fn [state' state-sys] (sys/execute-state state' state-sys)) state sys/state)]
+  (let [state' (sys/execute-events state @events/inbox)
+        state'' (reduce (fn [state' state-sys] (sys/execute-state state' state-sys)) state' sys/state)]
     (doseq [effect-sys sys/effect]
       (sys/execute-effect state effect-sys))
 
-    (events/clear-inbox!)
-
-    state'))
+    state''))
 
 (defn update-scene-objects [state]
   (doseq [{:keys [update] :as object} (into (:background state) (:foreground state))]

@@ -67,6 +67,10 @@
    :movement {:meter 0
               :move-fn handle-movement}
 
+   :effects [:damage
+             :tire]
+   :status []
+
    :grid {:x 0 :y 0}
    :graphics (build-sprite)
    :z-index  1
@@ -77,6 +81,11 @@
                                          dmg :dmg}]
                              (if (= (:id g) target-id)
                                (handle-lick g dmg)
-                               g))}
+                               g))
+            :bump (fn [g state {bumpee :bumpee
+                                effects :effects}]
+                    (if (= bumpee (:id g))
+                      (move/bumped g effects)
+                      g))}
    :init   (partial init! [x y])
    :update update!})

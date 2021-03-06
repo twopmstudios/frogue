@@ -92,7 +92,6 @@
     (.addChild stage graphics)
     (sort-by-z-index stage)
 
-    (println "added" actor)
     actor))
 
 (defn remove-actor-from-stage [stage actor]

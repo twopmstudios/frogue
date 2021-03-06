@@ -19,16 +19,17 @@
 
     node))
 
-(defn event-processing-system [node state]
+(defn event-processing-system [node state events]
   ;; (println "node->events" (:events node))
   ;; (println "node->inbox" (:inbox node))
+  ;;   
 
   (let [node' (reduce (fn [acc [ev data]]
                         (if-let [handler (get-in node [:events ev])]
                           (handler node state data)
                           acc))
                       node
-                      @events/inbox)]
+                      events)]
 
     node'))
 
@@ -36,8 +37,15 @@
   (when (and (:transform node) (:graphics node))
     (engine/set-graphics-position node)))
 
-(def state [update-system rotate-system event-processing-system])
+(def state [update-system rotate-system])
 (def effect [graphics-system])
+
+(defn execute-events [state events]
+  (events/clear-inbox!)
+  (update state :actors
+          (fn [actors]
+            (map (fn [node] (event-processing-system node state events))
+                 actors))))
 
 (defn execute-state [state system]
   (update state :actors

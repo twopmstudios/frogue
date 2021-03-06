@@ -11,5 +11,6 @@
   ([ev data]
    (print/debug (str "trigger:" ev))
    (println data)
-   (vswap! inbox (fn [i] (conj i [ev data])))))
+   (vswap! inbox (fn [i] (conj i [ev data])))
+   (println @inbox)))
 

@@ -101,8 +101,12 @@
             :target {:x 0 :y 0}}
 
    :stats {:egg 200
+           :size 10
            :lick 2
            :tongue 2}
+
+   :effects [:damage]
+   :status []
 
    :inbox []
    :events {:move-up-pressed (fn [p state] (move-grid p state 0 -1))
@@ -113,6 +117,13 @@
             :tongue-up-pressed (fn [p state] (shoot-tongue p state :up))
             :tongue-down-pressed (fn [p state] (shoot-tongue p state :down))
             :tongue-left-pressed (fn [p state] (shoot-tongue p state :left))
-            :tongue-right-pressed (fn [p state] (shoot-tongue p state :right))}
+            :tongue-right-pressed (fn [p state] (shoot-tongue p state :right))
+
+            :bump (fn [g state {bumpee :bumpee
+                                effects :effects}]
+                    (println "XXX")
+                    (if (= bumpee (:id g))
+                      (move/bumped g effects)
+                      g))}
    :init   (partial init! [x y])
    :update update!})

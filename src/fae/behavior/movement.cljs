@@ -32,7 +32,8 @@
       (do
         (events/trigger-event! :bump {:position {:x nx :y ny}
                                       :bumper id
-                                      :bumpee (:id occupant)})
+                                      :bumpee (:id occupant)
+                                      :effects (:effects actor)})
         actor)
       (-> actor
           (assoc-in [:grid :x] (+ (:x grid) x))
@@ -53,3 +54,13 @@
       :down (first-hit (fn [i] (get-actor-at state ox i)) r)
       :left (first-hit (fn [i] (get-actor-at state i oy)) r)
       :right (first-hit (fn [i] (get-actor-at state i oy)) r))))
+
+(defn bumped [actor effects]
+  (println "bumped" (:id actor) effects)
+  (reduce (fn [act e]
+            (println "bump effect" e)
+            (case e
+              :damage act
+              :tire (update act :status (fn [s] (conj s [:tired 3])))
+              act))
+          actor effects))
