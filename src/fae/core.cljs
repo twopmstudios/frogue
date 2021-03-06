@@ -4,6 +4,7 @@
    [fae.engine :as engine]
    [fae.entities.player :as player]
    [fae.entities.gnat :as gnat]
+   [fae.entities :as entities]
    [fae.world :as world]
    [fae.fps :as fps]
    [fae.ui :as ui]
@@ -59,11 +60,40 @@
     (vswap! db assoc :game-state :started)
     (.start (:ticker @db))))
 
+(defn in?
+  "true if coll contains elm"
+  [coll elm]
+  (boolean (some #(= elm %) coll)))
+
+
+(defn remove-actors [state to-remove]
+  (update state :actors (partial filter (fn [a] (not (in? to-remove (:id a)))))))
+
+(defn add-actors [state to-add]
+  (let [added (map (fn [a] (engine/add-actor-to-stage state a)) to-add)]
+    (update state :actors (fn [a] (concat a added)))))
 
 (defn update! [state]
   (when (engine/started? state)
-    (-> state
-        (update-actors))))
+    (let [to-remove @entities/to-remove
+          to-add @entities/to-add]
+
+      (when (> (count to-add) 0)
+        (vreset! entities/to-add []))
+
+      (when (> (count to-remove) 0)
+        (println "removing" to-remove)
+        (doseq [id to-remove]
+          (when-let [ent (entities/get-by-id id)]
+            (println "remove" ent)
+            (engine/remove-actor-from-stage (:stage state) ent)))
+
+        (vreset! entities/to-remove []))
+
+      (-> state
+          (remove-actors to-remove)
+          (add-actors to-add)
+          (update-actors)))))
 
 ;; init
 
@@ -81,12 +111,14 @@
    :foreground   []
    :actors       [(fps/instance state/db [0 0])
                   (player/instance state/db [10 10])
-                  (gnat/instance state/db [5 5])
-                  (gnat/instance state/db [8 2])
-                  (gnat/instance state/db [5 5])]})
+                  ;; (gnat/instance state/db [5 5])
+                  (gnat/instance state/db [8 2])]})
 
 (defn init-state [state]
-  (vreset! state (initial-state)))
+  (vreset! state (initial-state))
+  (vreset! entities/to-remove [])
+  (vreset! entities/to-add [])
+  (vreset! events/inbox []))
 
 (defn canvas [state scale dpi [w h]]
   (let [width w

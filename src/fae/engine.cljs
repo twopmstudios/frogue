@@ -91,14 +91,17 @@
     (set-graphics-position actor)
     (.addChild stage graphics)
     (sort-by-z-index stage)
+
+    (println "added" actor)
     actor))
 
-(defn remove-from-stage [stage actor]
+(defn remove-actor-from-stage [stage actor]
+  (println "gfx" (:graphics actor))
   (.removeChild stage (:graphics actor)))
 
 (defn clear-stage [{:keys [background actors foreground stage]}]
   (doseq [object (concat background actors foreground)]
-    (remove-from-stage stage object)))
+    (remove-actor-from-stage stage object)))
 
 (defn init-stage []
   (new js/PIXI.Container))

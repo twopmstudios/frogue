@@ -2,6 +2,10 @@
   (:require
    [fae.engine :as engine]
    [fae.print :as print]
+   [fae.events :as e]
+   [fae.entities :as entities]
+   [fae.behavior.id :as id]
+   [fae.behavior.movement :as move]
    [fae.grid :as grid]))
 
 (defn move [{{:keys [position]} :transform :as player} x y]
@@ -15,6 +19,7 @@
       (assoc-in [:grid :y] (+ (:y grid) y))))
 
 (defn init! [[x y] p _state]
+  (println "init gnat" x y (:id p))
   (-> p
       (assoc-in [:grid :x] x)
       (assoc-in [:grid :y] y)
@@ -35,37 +40,43 @@
 (defn build-sprite []
   (engine/sprite "gnat.png" [0 0]))
 
+(defn handle-movement [g _state movement]
+  (if (> movement 0)
+    (update-in g [:grid :x] (fn [x] (+ x movement)))
+    g))
+
+(defn handle-lick [g dmg]
+  (let [hp (get-in g [:stats :hp])
+        new-hp (- hp dmg)]
+
+    (when (<= new-hp 0)
+      (entities/remove-entity (:id g)))
+
+    (println "hurt" hp new-hp)
+    (assoc-in g [:stats :hp] new-hp)))
+
 (defn instance [_state [x y]]
-  {:id       :gnat
+  {:id       (id/generate!)
    :type     :gnat
 
    :transform {:position {:x 0 :y 0}
                :rotation 0}
 
-   :stats {:speed 1.5}
-   :movement {:meter 0}
+   :stats {:hp 5
+           :speed 0.7}
+   :movement {:meter 0
+              :move-fn handle-movement}
 
    :grid {:x 0 :y 0}
    :graphics (build-sprite)
-  ;;  :rotate-constantly (/ (+ x y) 2000.0)
    :z-index  1
 
    :inbox []
-   :events {:move-tick (fn [g _state]
-                         ;; add speed to movement meter
-                         ;; use integer meter value to move
-                         ;; carry over floating part
-                         (let [g' (update-in g [:movement :meter]
-                                             (fn [m] (+ m (get-in g [:stats :speed]))))
-                               meter' (get-in g' [:movement :meter])
-                               movement (js/Math.floor meter')
-                               meter'' (- meter' movement)
-                               g'' (assoc-in g' [:movement :meter] meter'')]
-
-                           (print/debug (str meter'' "," movement))
-
-                           (if (> movement 0)
-                             (update-in g'' [:grid :x] (fn [x] (+ x movement)))
-                             g'')))}
+   :events {:move-tick (fn [g state] (move/perform g state (get-in g [:movement :move-fn])))
+            :licked-target (fn [g state {target-id :id
+                                         dmg :dmg}]
+                             (if (= (:id g) target-id)
+                               (handle-lick g dmg)
+                               g))}
    :init   (partial init! [x y])
    :update update!})

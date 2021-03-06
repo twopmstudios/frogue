@@ -23,9 +23,9 @@
   ;; (println "node->events" (:events node))
   ;; (println "node->inbox" (:inbox node))
 
-  (let [node' (reduce (fn [acc ev]
+  (let [node' (reduce (fn [acc [ev data]]
                         (if-let [handler (get-in node [:events ev])]
-                          (handler node acc)
+                          (handler node state data)
                           acc))
                       node
                       @events/inbox)]

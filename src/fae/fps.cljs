@@ -3,6 +3,7 @@
    [fae.engine :as engine]
    [fae.print :as print]
    [fae.ui :as ui]
+   [fae.behavior.id :as id]
    [fae.grid :as grid]))
 
 (defn ship-icon []
@@ -21,7 +22,7 @@
   p)
 
 (defn instance [_state [x y]]
-  {:id       :fps
+  {:id       (id/generate!)
    :type     :fps
    :transform {:position {:x x :y y}}
    :graphics (ui/text-field "FPS" 8 "04b03")
