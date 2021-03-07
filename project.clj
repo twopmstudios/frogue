@@ -11,7 +11,8 @@
                  [re-frame "0.10.5"]
                  [reagent "0.8.0"]
                  [cljsjs/pixi "5.3.6-0"]
-                 [cljsjs/pixi-sound "1.4.1-0"]]
+                 [cljsjs/pixi-sound "1.4.1-0"]
+                 [cljsjs/rot "0.6.0-0"]]
 
   :source-paths ["src"]
 

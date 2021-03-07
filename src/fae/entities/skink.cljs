@@ -11,7 +11,9 @@
 (defn update! [p _state] (move/smooth-move p))
 
 (defn build-sprite []
-  (engine/sprite "skink.png" [0 0]))
+  (let [spr (engine/sprite "skink.png" [0 0])]
+    (set! (.-tint spr) 0xad4f34)
+    spr))
 
 (defn instance [_state [x y]]
   {:id       (id/generate!)
@@ -25,6 +27,7 @@
    :movement {:meter 0
               :move-fn move/handle-movement-random}
 
+   :traits []
    :effects [:damage :bleed]
    :status []
 

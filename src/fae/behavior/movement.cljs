@@ -58,8 +58,10 @@
 
 (defn move-grid [{:keys [grid id] :as actor} state x y]
   (let [[nx ny] [(+ (:x grid) x) (+ (:y grid) y)]]
-    (if (or (has-status? actor :tired)
-            (not= (world/get-tile state nx ny) 0))
+    (if (or (has-status? actor :tired) ;; tired -> can't move
+            (= 1 (world/get-tile state nx ny)) ;; walls -> can't move
+            (and (= 2 (world/get-tile state nx ny)) ;; water & non-flying -> can't move
+                 (not (util/in? (:traits actor) :flying))))
       actor
       (let [occupant (get-actor-at state nx ny)]
 
@@ -85,10 +87,22 @@
     (println "raycast" [ox oy] dir r)
 
     (case dir
-      :up  (first-hit (fn [i] (get-actor-at state ox i)) r)
-      :down (first-hit (fn [i] (get-actor-at state ox i)) r)
-      :left (first-hit (fn [i] (get-actor-at state i oy)) r)
-      :right (first-hit (fn [i] (get-actor-at state i oy)) r))))
+      :up  (first-hit (fn [i]
+                        (or (get-actor-at state ox i)
+                            (when (= 1 (world/get-tile state ox i))
+                              :wall))) r)
+      :down (first-hit (fn [i]
+                         (or (get-actor-at state ox i)
+                             (when (= 1 (world/get-tile state ox i))
+                               :wall))) r)
+      :left (first-hit (fn [i]
+                         (or (get-actor-at state i oy)
+                             (when (= 1 (world/get-tile state i oy))
+                               :wall))) r)
+      :right (first-hit (fn [i]
+                          (or (get-actor-at state i oy)
+                              (when (= 1 (world/get-tile state i oy))
+                                :wall))) r))))
 
 ;; (:type (entities/get-by-id 10))
 

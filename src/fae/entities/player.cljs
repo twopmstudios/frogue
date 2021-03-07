@@ -33,22 +33,6 @@
       (move/move-grid state x y)
       (assoc :mode :default)))
 
-(defn raycast [[ox oy] state dir length]
-  (let [first-hit (fn [f range] (first (filter some? (map f range))))
-        r (case dir
-            :up (reverse (range (- oy length) oy))
-            :down (range (inc oy) (+ (inc oy) length))
-            :left (reverse (range (- ox length) ox))
-            :right (range (inc ox) (+ (inc ox) length)))]
-
-    (println "raycast" [ox oy] dir r)
-
-    (case dir
-      :up  (first-hit (fn [i] (move/get-actor-at state ox i)) r)
-      :down (first-hit (fn [i] (move/get-actor-at state ox i)) r)
-      :left (first-hit (fn [i] (move/get-actor-at state i oy)) r)
-      :right (first-hit (fn [i] (move/get-actor-at state i oy)) r))))
-
 (defn shoot-tongue [p state dir]
   (let [tongue (get-in p [:stats :tongue])
         [tx ty] (case dir
@@ -62,10 +46,11 @@
 
     (e/trigger-event! :move-tick)
     (println "tongue" new-pos)
-    (when-let [target (raycast [(:x curr-pos) (:y curr-pos)] state dir tongue)]
-      (println "licked" (:id target) target)
-      (e/trigger-event! :licked-target {:id (:id target)
-                                        :dmg (get-in p [:stats :lick])}))
+    (when-let [target (move/raycast [(:x curr-pos) (:y curr-pos)] state dir tongue)]
+      (when (not= target :wall)
+        (println "licked" (:id target) target)
+        (e/trigger-event! :licked-target {:id (:id target)
+                                          :dmg (get-in p [:stats :lick])})))
 
     (-> p
         (assoc-in [:tongue :active] true)
@@ -79,7 +64,10 @@
 
 (defn build-sprite []
   (let [spr (engine/sprite "at.png" [0 0])]
-    (set! (.-tint spr) (rand-int 16rFFFFFF))
+    (set! (.-tint spr) (rand-nth [0x6daa2c
+                                  0xedd40c
+                                  0x895013
+                                  0x6ad0e8]))
     spr))
 
 (defn instance [_state [x y]]
@@ -101,6 +89,7 @@
            :lick 2
            :tongue 2}
 
+   :traits []
    :effects [:damage]
    :status []
 

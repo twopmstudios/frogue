@@ -10,6 +10,7 @@
    :snake "assets/snake.png"
    :dot "assets/dot.png"
    :wall "assets/wall.png"
+   :water "assets/water.png"
    :ship  "assets/ship.gif"
    :fnt "assets/fonts/04b03.ttf.woff"
    :fnt-1 "assets/fonts/04b03.ttf.svg#04b03"

@@ -12,3 +12,8 @@
         ;; remove all values from list that are <= 0
         status'' (filter (fn [[_ duration]] (> duration 0)) status')]
     (assoc actor :status status'')))
+
+
+;; 1. entites have a poisonous stat
+;; 2. attacking an entity with poisonous > 0 -> taking large dmg & gaining +1 to poisonous stat
+;; 3. being attacked when poisonous -> tick down poisonous stat by 1

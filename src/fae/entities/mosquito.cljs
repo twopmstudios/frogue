@@ -13,8 +13,11 @@
 
 (defn update! [p _state] (move/smooth-move p))
 
+
 (defn build-sprite []
-  (engine/sprite "mosquito.png" [0 0]))
+  (let [spr (engine/sprite "mosquito.png" [0 0])]
+    (set! (.-tint spr) 0xaaaaaa)
+    spr))
 
 (defn instance [_state [x y]]
   {:id       (id/generate!)
@@ -28,6 +31,7 @@
    :movement {:meter 0
               :move-fn move/handle-movement-aggressive}
 
+   :traits [:flying]
    :effects [:damage]
    :status []
 

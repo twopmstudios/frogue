@@ -11,7 +11,10 @@
 (defn update! [p _state] (move/smooth-move p))
 
 (defn build-sprite []
-  (engine/sprite "gnat.png" [0 0]))
+  (let [spr (engine/sprite "gnat.png" [0 0])]
+    (set! (.-tint spr) 0xc9b61b)
+    spr))
+
 
 (defn instance [_state [x y]]
   {:id       (id/generate!)
@@ -25,6 +28,7 @@
    :movement {:meter 0
               :move-fn move/handle-movement-random}
 
+   :traits [:flying]
    :effects [:damage
              :tire]
    :status []

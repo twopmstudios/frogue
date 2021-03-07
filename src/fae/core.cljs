@@ -22,7 +22,8 @@
    [fae.util :as util]
    [reagent.core :as r]
    [cljsjs.pixi]
-   [cljsjs.pixi-sound]))
+   [cljsjs.pixi-sound]
+   [cljsjs.rot]))
 
 (defn update-actors [state]
   (let [state' (sys/execute-events state @events/inbox)
@@ -110,7 +111,7 @@
    :background   [(world/instance)]
    :foreground   []
    :actors       [(fps/instance state/db [0 0])
-                  (game-log/instance state/db [340 210])
+                  (game-log/instance state/db [356 210])
                   (player/instance state/db [10 10])
                   (mosquito/instance state/db [7 2])
                   (mosquito/instance state/db [12 4])
