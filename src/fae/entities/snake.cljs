@@ -1,4 +1,4 @@
-(ns fae.entities.skink
+(ns fae.entities.snake
   (:require
    [fae.engine :as engine]
    [fae.behavior.id :as id]
@@ -11,29 +11,21 @@
 (defn update! [p _state] (move/smooth-move p))
 
 (defn build-sprite []
-  (engine/sprite "skink.png" [0 0]))
-
-(defn handle-movement [g state movement]
-  (let [dir (rand-nth [:up :down :left :right])
-        [x y] (move/dir->vec dir movement)]
-    (if (> movement 0)
-      (move/move-grid g state x y)
-      g)))
-
+  (engine/sprite "snake.png" [0 0]))
 
 (defn instance [_state [x y]]
   {:id       (id/generate!)
-   :type     :skink
+   :type     :snake
 
    :transform {:position {:x 0 :y 0}
                :rotation 0}
 
-   :stats {:hp 10
-           :speed 1.5}
+   :stats {:hp 7
+           :speed 0.7}
    :movement {:meter 0
-              :move-fn handle-movement}
+              :move-fn move/handle-movement-aggressive}
 
-   :effects [:damage :bleed]
+   :effects [:venom]
    :status []
 
    :grid {:x 0 :y 0}

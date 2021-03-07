@@ -7,5 +7,7 @@
         bleeds (filter (fn [[effect _]] (= effect :bleeding)) status)
         total-dmg (reduce (fn [acc [_ dmg]] (+ acc dmg)) 0 bleeds)]
     (when (> total-dmg 0)
-      (events/trigger-event! :damaged {:id (:id g) :amount total-dmg :source "bleed"})))
+      (events/trigger-event! :damaged {:id (:id g)
+                                       :amount total-dmg
+                                       :source "bleed"})))
   g)

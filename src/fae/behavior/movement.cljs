@@ -3,6 +3,7 @@
             [fae.util :as util]
             [fae.entities :as entities]
             [fae.grid :as grid]
+            [fae.world :as world]
             [fae.events :as events]))
 
 (defn perform [g state move-fn]
@@ -56,21 +57,22 @@
   (boolean (some (fn [[s _duration]] (= s status)) (:status actor))))
 
 (defn move-grid [{:keys [grid id] :as actor} state x y]
-  (if (has-status? actor :tired)
-    actor
-    (let [[nx ny] [(+ (:x grid) x) (+ (:y grid) y)]
-          occupant (get-actor-at state nx ny)]
+  (let [[nx ny] [(+ (:x grid) x) (+ (:y grid) y)]]
+    (if (or (has-status? actor :tired)
+            (not= (world/get-tile state nx ny) 0))
+      actor
+      (let [occupant (get-actor-at state nx ny)]
 
-      (if occupant
-        (do
-          (events/trigger-event! :bump {:position {:x nx :y ny}
-                                        :bumper id
-                                        :bumpee (:id occupant)
-                                        :effects (:effects actor)})
-          actor)
-        (-> actor
-            (assoc-in [:grid :x] (+ (:x grid) x))
-            (assoc-in [:grid :y] (+ (:y grid) y)))))))
+        (if occupant
+          (do
+            (events/trigger-event! :bump {:position {:x nx :y ny}
+                                          :bumper id
+                                          :bumpee (:id occupant)
+                                          :effects (:effects actor)})
+            actor)
+          (-> actor
+              (assoc-in [:grid :x] (+ (:x grid) x))
+              (assoc-in [:grid :y] (+ (:y grid) y))))))))
 
 (defn raycast [[ox oy] state dir length]
   (let [first-hit (fn [f range] (first (filter some? (map f range))))
@@ -92,8 +94,14 @@
 
 (defn bumped [actor effects other-id]
   (println "bumped" (:id actor) effects other-id)
-  ;; (let [bumper (entities/get-by-id other-id)])
-    ;; (println "bumped" (:id actor) effects other-id)
+
+  ;; if actor has poisonous stat -> deal damage to other-id
+  (when-let [dmg (get-in actor [:stats :poisonous])]
+    (when (> dmg 0)
+      (events/trigger-event! :damaged {:id other-id
+                                       :amount dmg
+                                       :source "poison"})))
+
   (reduce (fn [act e]
             (println "bump effect" e)
             (case e
@@ -109,5 +117,52 @@
                            (events/trigger-event! :log-entry-posted {:msg (util/format "You are bleeding (3 turns)")})
                            (events/trigger-event! :log-entry-posted {:msg (util/format "%s is bleeding (3 turns)" (:type actor))}))
                          (update act :status (fn [s] (conj s [:bleeding 3]))))
+              :venom (do
+                       (if (= (:type actor) :player)
+                         (events/trigger-event! :log-entry-posted {:msg (util/format "You gain +1 poison!")})
+                         (events/trigger-event! :log-entry-posted {:msg (util/format "%s gains +1 poison!" (:type actor))}))
+
+                       (events/trigger-event! :damaged {:id (:id actor)
+                                                        :amount 1
+                                                        :source "venom"})
+                       (update-in act [:stats :poisonous] (fnil inc 0)))
               act))
           actor effects))
+
+(defn abs [n] (max n (- n)))
+
+(defn adjacent? [a b]
+  (let [ax (:x a)
+        ay (:y a)
+        bx (:x b)
+        by (:y b)]
+    (or
+     (and (= ax bx) (= 1 (abs (- ay by))))
+     (and (= ay by) (= 1 (abs (- ax bx)))))))
+
+(defn diff [a b]
+  (let [ax (:x a)
+        ay (:y a)
+        bx (:x b)
+        by (:y b)]
+    {:x (- ax bx) :y (- ay by)}))
+
+(defn handle-movement-aggressive [g state movement]
+  (let [player-pos (:grid (entities/get-by-type :player))
+        next-to-player (adjacent? player-pos (:grid g))
+        d (diff player-pos (:grid g))]
+
+    (if next-to-player
+      (move-grid g state (d :x) (d :y))
+      (let [dir (rand-nth [:up :down :left :right])
+            [x y] (dir->vec dir movement)]
+        (if (> movement 0)
+          (move-grid g state x y)
+          g)))))
+
+(defn handle-movement-random [g state movement]
+  (let [dir (rand-nth [:up :down :left :right])
+        [x y] (dir->vec dir movement)]
+    (if (> movement 0)
+      (move-grid g state x y)
+      g)))

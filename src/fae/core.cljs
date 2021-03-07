@@ -6,6 +6,8 @@
    [fae.entities.gnat :as gnat]
    [fae.entities.mosquito :as mosquito]
    [fae.entities.skink :as skink]
+   [fae.entities.newt :as newt]
+   [fae.entities.snake :as snake]
    [fae.entities.fps :as fps]
    [fae.entities.game-log :as game-log]
    [fae.entities :as entities]
@@ -115,6 +117,8 @@
                   (mosquito/instance state/db [2 8])
                   (skink/instance state/db [12 12])
                   (skink/instance state/db [6 2])
+                  (newt/instance state/db [12 2])
+                  (snake/instance state/db [20 5])
                   (gnat/instance state/db [8 2])
                   (gnat/instance state/db [9 3])
                   (gnat/instance state/db [3 3])]})
