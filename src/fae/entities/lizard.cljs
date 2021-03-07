@@ -1,4 +1,4 @@
-(ns fae.entities.gnat
+(ns fae.entities.skink
   (:require
    [fae.engine :as engine]
    [fae.behavior.id :as id]
@@ -11,7 +11,7 @@
 (defn update! [p _state] (move/smooth-move p))
 
 (defn build-sprite []
-  (engine/sprite "gnat.png" [0 0]))
+  (engine/sprite "skink.png" [0 0]))
 
 (defn handle-movement [g state movement]
   (let [dir (rand-nth [:up :down :left :right])
@@ -23,18 +23,17 @@
 
 (defn instance [_state [x y]]
   {:id       (id/generate!)
-   :type     :gnat
+   :type     :skink
 
    :transform {:position {:x 0 :y 0}
                :rotation 0}
 
-   :stats {:hp 5
-           :speed 0.7}
+   :stats {:hp 10
+           :speed 1.5}
    :movement {:meter 0
               :move-fn handle-movement}
 
-   :effects [:damage
-             :tire]
+   :effects [:damage :bleed]
    :status []
 
    :grid {:x 0 :y 0}

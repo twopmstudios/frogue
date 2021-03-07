@@ -4,8 +4,7 @@
    [fae.print :as print]
    [fae.events :as e]
    [fae.entities :as entities]
-   [fae.behavior.licked :as lick]
-   [fae.behavior.damaged :as damage]
+   [fae.behavior.standard :as standard]
    [fae.behavior.id :as id]
    [fae.behavior.movement :as move]
    [fae.grid :as grid]))
@@ -70,20 +69,10 @@
    :z-index  1
 
    :inbox []
-   :events {:move-tick (fn [g state] (move/perform g state (get-in g [:movement :move-fn])))
-            :licked-target (fn [g state {target-id :id
-                                         dmg :dmg}]
-                             (if (= (:id g) target-id)
-                               (lick/handle g dmg)
-                               g))
-            :damaged (fn [g state {id :id
-                                   amount :amount}]
-                       (if (= id (:id g)) (damage/handle g amount) g))
-
-            :bump (fn [g state {bumpee :bumpee
-                                effects :effects}]
-                    (if (= bumpee (:id g))
-                      (move/bumped g effects)
-                      g))}
+   :events {:move-tick standard/handle-move-tick
+            :licked-target standard/handle-licked-target
+            :damaged standard/handle-damaged
+            :bump standard/handle-bumped}
    :init   (partial init! [x y])
    :update update!})
+

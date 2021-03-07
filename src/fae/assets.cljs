@@ -5,6 +5,7 @@
   {:at "assets/at.png"
    :gnat "assets/gnat.png"
    :mosquito "assets/mosquito.png"
+   :skink "assets/skink.png"
    :dot "assets/dot.png"
    :ship  "assets/ship.gif"
    :fnt "assets/fonts/04b03.ttf.woff"

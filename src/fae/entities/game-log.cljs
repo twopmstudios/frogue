@@ -1,5 +1,6 @@
-(ns fae.fps
+(ns fae.entities.game-log
   (:require
+   [clojure.string :as str]
    [fae.engine :as engine]
    [fae.print :as print]
    [fae.ui :as ui]
@@ -16,18 +17,20 @@
     (.lineTo -12.5 -10)
     (.endFill)))
 
-(defn update! [{text :graphics :as p} {ticker :ticker}]
-  (set! (.-text text) (-> (aget ticker "FPS")
-                          (.toFixed 2)))
+(defn update! [{text :graphics log :log :as p} _state]
+  (let [lines (str/join "\n" (reverse log))]
+    (set! (.-text text) lines))
   p)
 
 (defn instance [_state [x y]]
   {:id       (id/generate!)
    :type     :fps
    :transform {:position {:x x :y y}}
-   :graphics (ui/text-field "FPS" 8 "04b03")
+   :log '()
+   :graphics (ui/text-field "" 8 "04b03")
    :z-index  1
 
-   :events {}
+   :events {:log-entry-posted (fn [p _state {msg :msg}]
+                                (update p :log (fn [log] (take 5 (conj log msg)))))}
    :init     (fn [p _state] p)
    :update update!})

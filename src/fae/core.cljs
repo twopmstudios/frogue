@@ -5,9 +5,11 @@
    [fae.entities.player :as player]
    [fae.entities.gnat :as gnat]
    [fae.entities.mosquito :as mosquito]
+   [fae.entities.skink :as skink]
+   [fae.entities.fps :as fps]
+   [fae.entities.game-log :as game-log]
    [fae.entities :as entities]
    [fae.world :as world]
-   [fae.fps :as fps]
    [fae.ui :as ui]
    [fae.state :as state]
    [fae.systems :as sys]
@@ -94,7 +96,7 @@
 ;; init
 
 (def dpi (or js/window.devicePixelRatio 1))
-(def scale 3)
+(def scale 2)
 ;; (def resolution [(.-innerWidth js/window) (.-innerHeight js/window)])
 (def resolution [960 540])
 
@@ -106,9 +108,13 @@
    :background   [(world/instance)]
    :foreground   []
    :actors       [(fps/instance state/db [0 0])
+                  (game-log/instance state/db [340 210])
                   (player/instance state/db [10 10])
+                  (mosquito/instance state/db [7 2])
                   (mosquito/instance state/db [12 4])
                   (mosquito/instance state/db [2 8])
+                  (skink/instance state/db [12 12])
+                  (skink/instance state/db [6 2])
                   (gnat/instance state/db [8 2])
                   (gnat/instance state/db [9 3])
                   (gnat/instance state/db [3 3])]})

@@ -1,6 +1,7 @@
 (ns fae.behavior.movement
   (:require [fae.print :as print]
             [fae.util :as util]
+            [fae.entities :as entities]
             [fae.grid :as grid]
             [fae.events :as events]))
 
@@ -87,14 +88,26 @@
       :left (first-hit (fn [i] (get-actor-at state i oy)) r)
       :right (first-hit (fn [i] (get-actor-at state i oy)) r))))
 
-(defn bumped [actor effects]
-  (println "bumped" (:id actor) effects)
+;; (:type (entities/get-by-id 10))
+
+(defn bumped [actor effects other-id]
+  (println "bumped" (:id actor) effects other-id)
+  ;; (let [bumper (entities/get-by-id other-id)])
+    ;; (println "bumped" (:id actor) effects other-id)
   (reduce (fn [act e]
             (println "bump effect" e)
             (case e
               :damage (do (events/trigger-event! :damaged {:id (:id actor)
-                                                           :amount 1})
+                                                           :amount 1
+                                                           :source other-id})
                           act)
-              :tire (update act :status (fn [s] (conj s [:tired 3])))
+              :tire (do (if (= (:type actor) :player)
+                          (events/trigger-event! :log-entry-posted {:msg (util/format "You feel tired (3 turns)")})
+                          (events/trigger-event! :log-entry-posted {:msg (util/format "%s feels tired (3 turns)" (:type actor))}))
+                        (update act :status (fn [s] (conj s [:tired 3]))))
+              :bleed (do (if (= (:type actor) :player)
+                           (events/trigger-event! :log-entry-posted {:msg (util/format "You are bleeding (3 turns)")})
+                           (events/trigger-event! :log-entry-posted {:msg (util/format "%s is bleeding (3 turns)" (:type actor))}))
+                         (update act :status (fn [s] (conj s [:bleeding 3]))))
               act))
           actor effects))

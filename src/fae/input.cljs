@@ -25,9 +25,10 @@
       "a" (dispatch :tongue-left-pressed)
       "s" (dispatch :tongue-down-pressed)
       "d" (dispatch :tongue-right-pressed)
+      "j" (dispatch :jump-pressed)
       "1" (println (map (fn [{:keys [id type]}] [id type]) (:actors @s/db)))
       "2" (println (:actors @s/db))
-      "3" (entities/add-entity! (gnat/instance @s/db [3 3]))
+      "3" (println @e/inbox)
       nil)))
 
 (defn attach-listeners []
