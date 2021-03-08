@@ -126,14 +126,13 @@
                   (player/instance state/db [10 10])]})
 
 (defn start! [state]
-  (println "I'M STARTIN")
   (doseq [to-spawn (:to-spawn state)]
     (entities/add-entity! (case to-spawn
-                            :gnat (gnat/instance state/db (world/find-space state 2))
-                            :mosquito (mosquito/instance state/db (world/find-space state 2))
-                            :skink (skink/instance state/db (world/find-space state 0))
-                            :snake (snake/instance state/db (world/find-space state 0))
-                            :newt (newt/instance state/db (world/find-space state 0)))))
+                            :gnat (gnat/instance state (world/find-space state 2))
+                            :mosquito (mosquito/instance state (world/find-space state 2))
+                            :skink (skink/instance state (world/find-space state 0))
+                            :snake (snake/instance state (world/find-space state 0))
+                            :newt (newt/instance state (world/find-space state 0)))))
   state)
 
 (defn init-state [state]

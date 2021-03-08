@@ -4,42 +4,50 @@
    [fae.state :as state]
    [fae.grid :as grid]))
 
+(def EMPTY 0)
+(def WALL 1)
+(def WATER 2)
+
+(defn generate-walls [w h]
+  (let [map (new js/ROT.Map.Cellular w h)]
+    (. map randomize 0.25)
+    (js->clj (aget map "_map"))))
+
+(defn generate-water [w h]
+  (let [map (new js/ROT.Map.Cellular w h)]
+    (. map randomize 0.4)
+    (. map create nil)
+    (. map create nil)
+    (js->clj (aget map "_map"))))
+
+(defn on-boundary? [w h x y]
+  (or (= x 0)
+      (= y 0)
+      (= x (dec w))
+      (= y (dec h))))
 
 (defn instance []
   (let [dims [22 16]
         [w h] dims
-        rot-wall-map (js/ROT.Map.Cellular. w h)
-        rot-water-map (js/ROT.Map.Cellular. w h)]
+        wall-map (generate-walls w h)
+        water-map (generate-water w h)]
     {:id     :world
      :dimensions dims
-     :contents (do
-                 (. rot-wall-map randomize 0.25)
-                 (. rot-water-map randomize 0.4)
-                 (. rot-water-map create nil)
-                 (. rot-water-map create nil)
-                 (let [wall-map (js->clj (.-_map rot-wall-map))
-                       water-map (js->clj (.-_map rot-water-map))]
-
-
-                   (vec (for [x (range 0 w)]
-                          (vec (for [y (range 0 h)]
-                                 (let [wall (get-in wall-map [x y])
-                                       water (get-in water-map [x y])]
-                                   (if (or (= x 0)
-                                           (= y 0)
-                                           (= x (dec w))
-                                           (= y (dec h)))
-                                     1
-                                     (cond
-                                       (= water 1) 2
-                                       (= wall 1) 1
-                                       :else 0)))))))))
+     :contents (vec (for [x (range 0 w)]
+                      (vec (for [y (range 0 h)]
+                             (let [wall (get-in wall-map [x y])
+                                   water (get-in water-map [x y])]
+                               (if (on-boundary? w h x y)
+                                 WALL
+                                 (cond
+                                   (= water 1) WATER
+                                   (= wall 1) WALL
+                                   :else EMPTY)))))))
      :graphics nil
      :init   (fn [world state]
                (let [{:keys [container] :as world} (assoc world :container (new js/PIXI.Container))
                      [w h] (:dimensions world)
-                     contents (:contents world)
-                     map (js/ROT.Map.Cellular. w h)]
+                     contents (:contents world)]
 
 
                  (doseq [x (range 0 w)]

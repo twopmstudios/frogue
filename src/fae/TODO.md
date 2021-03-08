@@ -1,5 +1,3 @@
-- Work out why game crashes in release build
-- Investigate event swallowing issues
 - Doors / leaving rooms
 - Tracking progress between rooms
 - Spawning other frog (after X rooms)
@@ -7,3 +5,6 @@
 - Win screen
 - Lose screen
 - Title screen
+- UI -> show player stats
+- UI -> inspect other actors
+- Pick up jump, gills etc.
