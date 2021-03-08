@@ -4,6 +4,7 @@
 (def paths
   {:at "assets/at.png"
    :frog "assets/frog.png"
+   :logo "assets/logo.png"
    :gnat "assets/gnat.png"
    :mosquito "assets/mosquito.png"
    :skink "assets/skink.png"
