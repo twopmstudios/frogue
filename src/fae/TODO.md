@@ -1,5 +1,5 @@
 - Doors / leaving rooms
-- UI -> show player stats
+- Gain size from eating
 - Pick up jump, gills etc.
 - Tracking progress between rooms
 - Spawning other frog (after X rooms)
