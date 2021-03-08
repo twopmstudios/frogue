@@ -2,6 +2,7 @@
   (:require
    [fae.entities.player :as player]
    [fae.entities.fps :as fps]
+   [fae.entities.hud :as hud]
    [fae.entities.game-log :as game-log]
    [fae.world :as world]
    [fae.entities :as entities]
@@ -28,7 +29,8 @@
               :skink
               :snake
               :newt]
-   :actors       [(fps/instance db [0 0])
+   :actors       [;;(fps/instance db [440 0])
+                  (hud/instance db [356 0])
                   (game-log/instance db [356 210])
                   (player/instance db [10 10])]})
 
