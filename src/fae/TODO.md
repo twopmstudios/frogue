@@ -1,10 +1,9 @@
 - Doors / leaving rooms
+- UI -> show player stats
+- Pick up jump, gills etc.
 - Tracking progress between rooms
 - Spawning other frog (after X rooms)
 - Ending the game after X + Y rooms
 - Win screen
 - Lose screen
-- Title screen
-- UI -> show player stats
 - UI -> inspect other actors
-- Pick up jump, gills etc.
