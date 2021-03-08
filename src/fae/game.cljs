@@ -46,10 +46,12 @@
     (.start (:ticker @db))
     (vswap! db start!)))
 
-(defn event-hook [ev _data]
+(defn event-hook [state ev _data]
   (case ev
-    :door-entered (js/setTimeout (fn [] (restart!)) 0)
-    nil))
+    :door-entered (do (js/setTimeout (fn [] (restart!)) 0)
+                      state)
+    :progress-event (assoc-in state [:progress :some-value] true)
+    state))
 
 (defn update-actors [state]
   (let [state' (sys/execute-events state event-hook)

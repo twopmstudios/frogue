@@ -48,11 +48,9 @@
     (let [state' (update state :actors
                          (fn [actors]
                            (map (fn [node] (event-processing-system node state events))
-                                actors)))]
-
-      (doseq [[ev data] events]
-        (hook-fn ev data))
-      state')))
+                                actors)))
+          state'' (reduce (fn [s [ev data]] (hook-fn s ev data)) state' events)]
+      state'')))
 
 (defn execute-state [state system]
   (update state :actors

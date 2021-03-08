@@ -27,8 +27,9 @@
       "j" (dispatch :jump-pressed)
       "r" (game/restart!)
       "1" (println (map (fn [{:keys [id type]}] [id type]) (:actors @s/db)))
-      "2" (println (:actors @s/db))
+      "2" (println (:progress @s/db))
       "3" (println @e/inbox)
+      "4" (dispatch :progress-event)
       nil)))
 
 (defn attach-listeners []
