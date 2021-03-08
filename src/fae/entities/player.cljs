@@ -80,10 +80,11 @@
 
    :mode :default
 
-   :stats {:eggs 200
-           :size 10
+   :stats {:eggs 10
+           :size 5
            :lick 2
-           :tongue 2}
+           :tongue 2
+           :poisonous 0}
 
    :traits []
    :effects [:damage]
