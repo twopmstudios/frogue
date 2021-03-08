@@ -4,7 +4,7 @@
 
 (defn text-field [text size font]
   (-> (new js/PIXI.Text text (new js/PIXI.TextStyle
-                                  #js {:fill       "#FF00FF"
+                                  #js {:fill       "#99e550"
                                        :fontSize   size
                                        :fontFamily font}))))
 
@@ -40,11 +40,14 @@
 
 (defn start-button [state parent-graphics]
   (let [graphics (doto (new js/PIXI.Graphics)
-                   (.lineStyle 2 0xFF00FF 1)
-                   (.beginFill 0xFF00BB 0.25)
+                   (.lineStyle 2 0x99e550 1)
+                   (.beginFill 0x37946e 0.25)
                    (.drawRoundedRect -10 -3 120 40 15)
                    (.endFill)
-                   (.addChild (text-field "START" 30 "Arial"))
+                   (.addChild (let [text (text-field "START" 32 "04b03")]
+                                (set! (.-x text) 6)
+                                (set! (.-y text) (- 2))
+                                text))
                    (.on "pointerdown" #(do
                                          (.removeChild (:stage @state) parent-graphics)
                                          (vswap! state assoc :game-state :started)
@@ -55,20 +58,33 @@
     (set! (.-buttonMode graphics) true)
     graphics))
 
-(defn help-menu [state]
+(defn title-screen [state]
   (let [graphics     (new js/PIXI.Graphics)
-        text-lines   ["Welcome"]
+        text-lines   ["#7DRL 2021"
+                      "Music By aj booker"
+
+                      "Made by TwoPM Studios (Ben Follington & Ricky James)"]
+        logo (let [spr (engine/sprite "logo.png")]
+               (set! (.-x spr) 240)
+               (set! (.-y spr) 64)
+               spr)
+        frog (let [spr (engine/sprite "frog.png")]
+               (set! (.-x spr) 240)
+               (set! (.-y spr) 160)
+               spr)
         instructions (map-indexed (fn [idx text]
-                                    (let [text (text-field text 15 "Arial")]
-                                      (set! (.-x text) 50)
-                                      (set! (.-y text) (* 30 (inc idx)))
+                                    (let [text (text-field text 16 "04b03")]
+                                      (set! (.-x text) 10)
+                                      (set! (.-y text) (+ 185 (* 20 (inc idx))))
                                       text))
                                   text-lines)
         button       (start-button state graphics)]
     (doseq [line instructions]
       (.addChild graphics line))
-    (set! (.-x button) (- (/ (:width @state) 2) 40))
-    (set! (.-y button) (- (/ (:height @state) 2) 20))
+    (set! (.-x button) (- (/ (:width @state) 2) 50))
+    (set! (.-y button) (+ (/ (:height @state) 2) 40))
     (.addChild graphics button)
+    (.addChild graphics frog)
+    (.addChild graphics logo)
     (.addChild (:stage @state) graphics)
     state))

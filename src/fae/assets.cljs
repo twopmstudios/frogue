@@ -3,6 +3,7 @@
 
 (def paths
   {:at "assets/at.png"
+   :frog "assets/frog.png"
    :gnat "assets/gnat.png"
    :mosquito "assets/mosquito.png"
    :skink "assets/skink.png"

@@ -28,7 +28,7 @@
         height h]
     (r/create-class
      {:component-did-mount
-      (engine/init-canvas state (* scale dpi) ui/help-menu game/update!)
+      (engine/init-canvas state (* scale dpi) ui/title-screen game/update!)
       :render
       (fn []
         [:canvas {:width (* width dpi)
