@@ -10,5 +10,8 @@
   ([ev] (trigger-event! ev nil))
   ([ev data]
    (print/debug (str "trigger:" ev data))
-   (vswap! inbox (fn [i] (conj i [ev data])))))
+   (vswap! inbox (fn [i]
+                   (let [new (conj i [ev data])]
+                    ;; (print/debug new)
+                     new)))))
 

@@ -106,42 +106,42 @@
 
 ;; (:type (entities/get-by-id 10))
 
-(defn bumped [actor effects other-id]
-  (println "bumped" (:id actor) effects other-id)
+(defn bumped [actor state effects other-id]
+  (let [bumper (entities/get-by-id other-id state)]
+    (println "bumped" (:id actor) effects other-id)
 
   ;; if actor has poisonous stat -> deal damage to other-id
-  (when-let [dmg (get-in actor [:stats :poisonous])]
-    (when (> dmg 0)
-      (events/trigger-event! :damaged {:id other-id
-                                       :amount dmg
-                                       :source "poison"})))
+    (when-let [dmg (get-in actor [:stats :poisonous])]
+      (when (> dmg 0)
+        (events/trigger-event! :damaged {:id other-id
+                                         :amount dmg
+                                         :source "poison"})))
 
-  (reduce (fn [act e]
-            (println "bump effect" e)
-            (case e
-              :damage (do (events/trigger-event! :damaged {:id (:id actor)
-                                                           :amount 1
-                                                           :source other-id})
-                          act)
-              :tire (do (if (= (:type actor) :player)
-                          (events/trigger-event! :log-entry-posted {:msg (util/format "You feel tired (3 turns)")})
-                          (events/trigger-event! :log-entry-posted {:msg (util/format "%s feels tired (3 turns)" (:type actor))}))
-                        (update act :status (fn [s] (conj s [:tired 3]))))
-              :bleed (do (if (= (:type actor) :player)
-                           (events/trigger-event! :log-entry-posted {:msg (util/format "You are bleeding (3 turns)")})
-                           (events/trigger-event! :log-entry-posted {:msg (util/format "%s is bleeding (3 turns)" (:type actor))}))
-                         (update act :status (fn [s] (conj s [:bleeding 3]))))
-              :venom (do
-                       (if (= (:type actor) :player)
-                         (events/trigger-event! :log-entry-posted {:msg (util/format "You gain +1 poison!")})
-                         (events/trigger-event! :log-entry-posted {:msg (util/format "%s gains +1 poison!" (:type actor))}))
+    (reduce (fn [act e]
+              (case e
+                :damage (do (events/trigger-event! :damaged {:id (:id actor)
+                                                             :amount 1
+                                                             :source (:type bumper)})
+                            act)
+                :tire (do (if (= (:type actor) :player)
+                            (events/trigger-event! :log-entry-posted {:msg (util/format "You feel tired (3 turns)")})
+                            (events/trigger-event! :log-entry-posted {:msg (util/format "%s feels tired (3 turns)" (:type actor))}))
+                          (update act :status (fn [s] (conj s [:tired 3]))))
+                :bleed (do (if (= (:type actor) :player)
+                             (events/trigger-event! :log-entry-posted {:msg (util/format "You are bleeding (3 turns)")})
+                             (events/trigger-event! :log-entry-posted {:msg (util/format "%s is bleeding (3 turns)" (:type actor))}))
+                           (update act :status (fn [s] (conj s [:bleeding 3]))))
+                :venom (do
+                         (if (= (:type actor) :player)
+                           (events/trigger-event! :log-entry-posted {:msg (util/format "You gain +1 poison!")})
+                           (events/trigger-event! :log-entry-posted {:msg (util/format "%s gains +1 poison!" (:type actor))}))
 
-                       (events/trigger-event! :damaged {:id (:id actor)
-                                                        :amount 1
-                                                        :source "venom"})
-                       (update-in act [:stats :poisonous] (fnil inc 0)))
-              act))
-          actor effects))
+                         (events/trigger-event! :damaged {:id (:id actor)
+                                                          :amount 1
+                                                          :source "venom"})
+                         (update-in act [:stats :poisonous] (fnil inc 0)))
+                act))
+            actor effects)))
 
 (defn abs [n] (max n (- n)))
 
@@ -162,7 +162,7 @@
     {:x (- ax bx) :y (- ay by)}))
 
 (defn handle-movement-aggressive [g state movement]
-  (let [player-pos (:grid (entities/get-by-type :player))
+  (let [player-pos (:grid (entities/get-by-type :player state))
         next-to-player (adjacent? player-pos (:grid g))
         d (diff player-pos (:grid g))]
 

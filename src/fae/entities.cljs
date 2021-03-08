@@ -4,13 +4,13 @@
 (def to-add (volatile! []))
 (def to-remove (volatile! []))
 
-(defn get-by-id [id]
-  (let [actors (:actors @state/db)
+(defn get-by-id [id state]
+  (let [actors (:actors state)
         matches (filter (fn [node] (= (:id node) id)) actors)]
     (first matches)))
 
-(defn get-by-type [type]
-  (let [actors (:actors @state/db)
+(defn get-by-type [type state]
+  (let [actors (:actors state)
         matches (filter (fn [node] (= (:type node) type)) actors)]
     (first matches)))
 

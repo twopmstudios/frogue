@@ -25,8 +25,8 @@
   ;;   
 
   (let [node' (reduce (fn [acc [ev data]]
-                        (if-let [handler (get-in node [:events ev])]
-                          (handler node state data)
+                        (if-let [handler (get-in acc [:events ev])]
+                          (handler acc state data)
                           acc))
                       node
                       events)]
@@ -40,12 +40,15 @@
 (def state [update-system rotate-system])
 (def effect [graphics-system])
 
-(defn execute-events [state events]
-  (events/clear-inbox!)
-  (update state :actors
-          (fn [actors]
-            (map (fn [node] (event-processing-system node state events))
-                 actors))))
+(defn execute-events [state]
+  (let [events @events/inbox]
+    ;; (when (> (count events) 0)
+    ;;   (println "processing events" events))
+    (events/clear-inbox!)
+    (update state :actors
+            (fn [actors]
+              (map (fn [node] (event-processing-system node state events))
+                   actors)))))
 
 (defn execute-state [state system]
   (update state :actors

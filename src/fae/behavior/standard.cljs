@@ -35,5 +35,5 @@
                               bumper :bumper
                               effects :effects}]
   (if (= bumpee (:id g))
-    (move/bumped g effects bumper)
+    (move/bumped g state effects bumper)
     g))

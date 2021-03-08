@@ -26,7 +26,7 @@
    [cljsjs.rot]))
 
 (defn update-actors [state]
-  (let [state' (sys/execute-events state @events/inbox)
+  (let [state' (sys/execute-events state)
         state'' (reduce (fn [state' state-sys] (sys/execute-state state' state-sys)) state' sys/state)]
     (doseq [effect-sys sys/effect]
       (sys/execute-effect state effect-sys))
@@ -52,6 +52,7 @@
 ;; lifecycle
 
 (declare initial-state)
+(declare start!)
 
 (defn restart! []
   (let [db state/db]
@@ -64,8 +65,8 @@
     (engine/init-scene db)
     (engine/init-render-loop db)
     (vswap! db assoc :game-state :started)
-    (.start (:ticker @db))))
-
+    (.start (:ticker @db))
+    (vswap! db start!)))
 
 (defn remove-actors [state to-remove]
   (update state :actors (partial filter (fn [a] (not (util/in? to-remove (:id a)))))))
@@ -85,7 +86,7 @@
       (when (> (count to-remove) 0)
         (println "removing" to-remove)
         (doseq [id to-remove]
-          (when-let [ent (entities/get-by-id id)]
+          (when-let [ent (entities/get-by-id id state)]
             (println "remove" ent)
             (engine/remove-actor-from-stage (:stage state) ent)))
 
@@ -110,25 +111,37 @@
    :update       update!
    :background   [(world/instance)]
    :foreground   []
+   :to-spawn [:mosquito
+              :mosquito
+              :mosquito
+              :gnat
+              :gnat
+              :gnat
+              :skink
+              :skink
+              :snake
+              :newt]
    :actors       [(fps/instance state/db [0 0])
                   (game-log/instance state/db [356 210])
-                  (player/instance state/db [10 10])
-                  (mosquito/instance state/db [7 2])
-                  (mosquito/instance state/db [12 4])
-                  (mosquito/instance state/db [2 8])
-                  (skink/instance state/db [12 12])
-                  (skink/instance state/db [6 2])
-                  (newt/instance state/db [12 2])
-                  (snake/instance state/db [20 5])
-                  (gnat/instance state/db [8 2])
-                  (gnat/instance state/db [9 3])
-                  (gnat/instance state/db [3 3])]})
+                  (player/instance state/db [10 10])]})
+
+(defn start! [state]
+  (println "I'M STARTIN")
+  (doseq [to-spawn (:to-spawn state)]
+    (entities/add-entity! (case to-spawn
+                            :gnat (gnat/instance state/db (world/find-space state 2))
+                            :mosquito (mosquito/instance state/db (world/find-space state 2))
+                            :skink (skink/instance state/db (world/find-space state 0))
+                            :snake (snake/instance state/db (world/find-space state 0))
+                            :newt (newt/instance state/db (world/find-space state 0)))))
+  state)
 
 (defn init-state [state]
   (vreset! state (initial-state))
   (vreset! entities/to-remove [])
   (vreset! entities/to-add [])
-  (vreset! events/inbox []))
+  (events/clear-inbox!)
+  (vswap! state start!))
 
 (defn canvas [state scale dpi [w h]]
   (let [width w

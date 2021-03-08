@@ -56,8 +56,22 @@
                  (assoc world :graphics container)))
      :update (fn [world state])}))
 
-(defn get-tile [state x y]
+(defn get-world [state]
   (let [bgs (:background state)
-        world (first bgs)
+        world (first bgs)]
+    world))
+
+(defn get-tile [state x y]
+  (let [world (get-world state)
         contents (:contents world)]
     (get-in contents [x y])))
+
+(defn find-space [state wanted-terrain]
+  (let [world (get-world state)
+        [w h] (:dimensions world)
+        candidates (filter some? (flatten (for [x (range 0 w)]
+                                            (for [y (range 0 h)]
+                                              (when (= wanted-terrain (get-tile state x y))
+                                                {:x x :y y})))))
+        pick (rand-nth candidates)]
+    [(:x pick) (:y pick)]))

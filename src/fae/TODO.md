@@ -1,0 +1,9 @@
+- Work out why game crashes in release build
+- Investigate event swallowing issues
+- Doors / leaving rooms
+- Tracking progress between rooms
+- Spawning other frog (after X rooms)
+- Ending the game after X + Y rooms
+- Win screen
+- Lose screen
+- Title screen
