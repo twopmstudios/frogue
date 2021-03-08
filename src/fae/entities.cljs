@@ -1,5 +1,6 @@
 (ns fae.entities
-  (:require [fae.state :as state]))
+  (:require [fae.util :as util]
+            [fae.engine :as engine]))
 
 (def to-add (volatile! []))
 (def to-remove (volatile! []))
@@ -15,13 +16,14 @@
     (first matches)))
 
 (defn add-entity! [e]
-  ;; add to state vector
-  ;; add to stage
   (vswap! to-add (fn [lst] (conj lst e))))
 
 (defn remove-entity [id]
-  ;; remove from vector
-  ;; remove from stage
+  (vswap! to-remove (fn [lst] (conj lst id))))
 
-  (vswap! to-remove (fn [lst] (conj lst id)))
-  (println "entities to remove" @to-remove))
+(defn remove-actors [state to-remove]
+  (update state :actors (partial filter (fn [a] (not (util/in? to-remove (:id a)))))))
+
+(defn add-actors [state to-add]
+  (let [added (map (fn [a] (engine/add-actor-to-stage state a)) to-add)]
+    (update state :actors (fn [a] (concat a added)))))

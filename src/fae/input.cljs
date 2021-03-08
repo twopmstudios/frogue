@@ -2,8 +2,7 @@
   (:require
    [fae.events :as e]
    [fae.print :as print]
-   [fae.entities :as entities]
-   [fae.entities.gnat :as gnat]
+   [fae.game :as game]
    [fae.state :as s]))
 
 ;; determine which key pressed, what event it triggers and call actor handlers
@@ -26,6 +25,7 @@
       "s" (dispatch :tongue-down-pressed)
       "d" (dispatch :tongue-right-pressed)
       "j" (dispatch :jump-pressed)
+      "r" (game/restart!)
       "1" (println (map (fn [{:keys [id type]}] [id type]) (:actors @s/db)))
       "2" (println (:actors @s/db))
       "3" (println @e/inbox)

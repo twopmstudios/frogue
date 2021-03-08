@@ -1,7 +1,6 @@
 (ns fae.world
   (:require
    [fae.engine :as engine]
-   [fae.state :as state]
    [fae.grid :as grid]))
 
 (def EMPTY 0)

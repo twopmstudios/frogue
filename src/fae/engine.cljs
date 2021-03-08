@@ -149,11 +149,11 @@
        (render renderer stage)
        (js/requestAnimationFrame frame)))))
 
-(defn init-render-loop [state]
+(defn init-render-loop [state update-fn]
   (.add (:ticker @state)
         (fn [delta]
           (when (started? @state)
-            (vswap! state #((:update %) (assoc % :delta delta)))))))
+            (vswap! state #(update-fn (assoc % :delta delta)))))))
 
 (defn cancel-render-loop [state]
   (.destroy (:ticker @state)))
@@ -206,7 +206,7 @@
       (when on-click
         (set! (.-click background-layer) (partial on-click state))))))
 
-(defn init-canvas [state scale init-fn]
+(defn init-canvas [state scale init-fn update-fn]
   (fn [component]
     (let [canvas (r/dom-node component)
           real-width  (int  (.-width canvas))
@@ -224,7 +224,7 @@
               :renderer (init-renderer canvas real-width real-height)
               :ticker ticker)
       (init-fn state)
-      (init-render-loop state)
+      (init-render-loop state update-fn)
       (render-loop state)
       (.update ticker (js/Date.now))
       (.start ticker))))

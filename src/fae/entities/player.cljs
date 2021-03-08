@@ -2,14 +2,10 @@
   (:require
    [fae.engine :as engine]
    [fae.events :as e]
-   [fae.state :as s]
    [fae.util :as util]
-   [fae.print :as print]
    [fae.behavior.movement :as move]
-   [fae.behavior.status :as status]
    [fae.behavior.standard :as standard]
-   [fae.behavior.id :as id]
-   [fae.grid :as grid]))
+   [fae.behavior.id :as id]))
 
 (defn ship-icon []
   (doto (new js/PIXI.Graphics)
