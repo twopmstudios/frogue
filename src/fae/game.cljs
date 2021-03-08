@@ -6,6 +6,7 @@
    [fae.entities.skink :as skink]
    [fae.entities.newt :as newt]
    [fae.entities.snake :as snake]
+   [fae.entities.door :as door]
    [fae.entities :as entities]
    [fae.world :as world]
    [fae.state :as state]
@@ -20,11 +21,12 @@
   (print/lifecycle "start!")
   (doseq [to-spawn (:to-spawn state)]
     (entities/add-entity! (case to-spawn
-                            :gnat (gnat/instance state (world/find-space state 2))
-                            :mosquito (mosquito/instance state (world/find-space state 2))
-                            :skink (skink/instance state (world/find-space state 0))
-                            :snake (snake/instance state (world/find-space state 0))
-                            :newt (newt/instance state (world/find-space state 0)))))
+                            :door (door/instance state (world/find-space state world/DOOR))
+                            :gnat (gnat/instance state (world/find-space state world/WATER))
+                            :mosquito (mosquito/instance state (world/find-space state world/WATER))
+                            :skink (skink/instance state (world/find-space state world/EMPTY))
+                            :snake (snake/instance state (world/find-space state world/EMPTY))
+                            :newt (newt/instance state (world/find-space state world/EMPTY)))))
   state)
 
 (defn restart! []
@@ -44,8 +46,13 @@
     (.start (:ticker @db))
     (vswap! db start!)))
 
+(defn event-hook [ev _data]
+  (case ev
+    :door-entered (js/setTimeout (fn [] (restart!)) 0)
+    nil))
+
 (defn update-actors [state]
-  (let [state' (sys/execute-events state)
+  (let [state' (sys/execute-events state event-hook)
         state'' (reduce (fn [state' state-sys] (sys/execute-state state' state-sys)) state' sys/state)]
     (doseq [effect-sys sys/effect]
       (sys/execute-effect state effect-sys))

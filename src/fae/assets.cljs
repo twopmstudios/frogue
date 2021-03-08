@@ -4,6 +4,7 @@
 (def paths
   {:at "assets/at.png"
    :frog "assets/frog.png"
+   :empty "assets/empty.png"
    :logo "assets/logo.png"
    :gnat "assets/gnat.png"
    :mosquito "assets/mosquito.png"
@@ -13,6 +14,7 @@
    :dot "assets/dot.png"
    :wall "assets/wall.png"
    :water "assets/water.png"
+   :door "assets/door.png"
    :ship  "assets/ship.gif"
    :fnt "assets/fonts/04b03.ttf.woff"
    :fnt-1 "assets/fonts/04b03.ttf.svg#04b03"

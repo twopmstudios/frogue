@@ -19,7 +19,11 @@
    :game-state   :stopped
    :background   [(world/instance)]
    :foreground   []
-   :to-spawn [:mosquito
+   :to-spawn [:door
+              :door
+              :door
+              :door
+              :mosquito
               :mosquito
               :mosquito
               :gnat

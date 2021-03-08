@@ -6,6 +6,7 @@
 (def EMPTY 0)
 (def WALL 1)
 (def WATER 2)
+(def DOOR 3)
 
 (defn generate-walls [w h]
   (let [map (new js/ROT.Map.Cellular w h)]
@@ -36,12 +37,15 @@
                       (vec (for [y (range 0 h)]
                              (let [wall (get-in wall-map [x y])
                                    water (get-in water-map [x y])]
-                               (if (on-boundary? w h x y)
-                                 WALL
-                                 (cond
-                                   (= water 1) WATER
-                                   (= wall 1) WALL
-                                   :else EMPTY)))))))
+                               (cond
+                                 (and (on-boundary? w h x y)
+                                      (or (= x (/ w 2))
+                                          (= y (/ h 2)))) DOOR
+                                 (and (= x 10) (= y 0)) 0
+                                 (on-boundary? w h x y) WALL
+                                 (= water 1) WATER
+                                 (= wall 1) WALL
+                                 :else EMPTY))))))
      :graphics nil
      :init   (fn [world state]
                (let [{:keys [container] :as world} (assoc world :container (new js/PIXI.Container))
@@ -54,7 +58,8 @@
                      (let [s (case (get-in contents [x y])
                                0 (engine/sprite "dot.png" [0 0])
                                1 (engine/sprite "wall.png" [0 0])
-                               2 (engine/sprite "water.png" [0 0]))]
+                               2 (engine/sprite "water.png" [0 0])
+                               3 (engine/sprite "empty.png" [0 0]))]
                        (.addChild container s)
                        (set! (.-x s) (* x grid/size))
                        (set! (.-y s) (* y grid/size)))))

@@ -1,9 +1,13 @@
-- Doors / leaving rooms
-- Gain size from eating
-- Pick up jump, gills etc.
 - Tracking progress between rooms
+  - Pick up jump, gills etc.
 - Spawning other frog (after X rooms)
 - Ending the game after X + Y rooms
 - Win screen
 - Lose screen
 - UI -> inspect other actors
+- Additional enemies
+  - Finch (formerly Sparrow)
+  - Magpie
+  - Toad
+  - Beetle
+    - Gain size from eating

@@ -40,15 +40,19 @@
 (def state [update-system rotate-system])
 (def effect [graphics-system])
 
-(defn execute-events [state]
+(defn execute-events [state hook-fn]
   (let [events @events/inbox]
     ;; (when (> (count events) 0)
     ;;   (println "processing events" events))
     (events/clear-inbox!)
-    (update state :actors
-            (fn [actors]
-              (map (fn [node] (event-processing-system node state events))
-                   actors)))))
+    (let [state' (update state :actors
+                         (fn [actors]
+                           (map (fn [node] (event-processing-system node state events))
+                                actors)))]
+
+      (doseq [[ev data] events]
+        (hook-fn ev data))
+      state')))
 
 (defn execute-state [state system]
   (update state :actors
