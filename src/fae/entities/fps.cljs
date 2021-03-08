@@ -17,8 +17,9 @@
     (.endFill)))
 
 (defn update! [{text :graphics :as p} {ticker :ticker}]
-  (set! (.-text text) (-> (aget ticker "FPS")
-                          (.toFixed 2)))
+  (set! (.-text text) (str (-> (aget ticker "FPS")
+                               (.toFixed 2))
+                           " FPS"))
   p)
 
 (defn instance [_state [x y]]
