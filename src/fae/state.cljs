@@ -17,7 +17,9 @@
   {:score        0
    :cancel-render false
    :game-state   :stopped
-   :progress {:some-value false}
+   :progress {:jump true
+              :gills false
+              :rooms 0}
    :background   [(world/instance)]
    :foreground   []
    :to-spawn [:door

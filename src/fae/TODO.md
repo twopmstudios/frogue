@@ -1,6 +1,7 @@
-- Tracking progress between rooms
-  - Pick up jump, gills etc.
+- Implement music
 - Spawning other frog (after X rooms)
+- Spawning items to unlock the tongue, gills and jumping
+- Graphics for tongue licking enemies
 - Ending the game after X + Y rooms
 - Win screen
 - Lose screen

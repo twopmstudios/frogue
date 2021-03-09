@@ -54,9 +54,15 @@
 
 (defn init! [pos p _state] (move/set-initial-position p pos))
 
-(defn update! [p _state]
+(defn gills->flying-trait [p state]
+  (if (get-in state [:progress :gills])
+    (assoc p :traits [:flying])
+    (assoc p :traits [])))
+
+(defn update! [p state]
   (-> p
-      (move/smooth-move)))
+      (move/smooth-move)
+      (gills->flying-trait state)))
 
 (defn build-sprite []
   (let [spr (engine/sprite "at.png" [0 0])]
@@ -93,7 +99,9 @@
    :inbox []
    :events {:move-tick standard/handle-move-tick
 
-            :jump-pressed (fn [p _] (assoc p :mode :jumping))
+            :jump-pressed (fn [p state] (if (get-in state [:progress :jump])
+                                          (assoc p :mode :jumping)
+                                          p))
 
             :move-up-pressed (fn [p state] (case (:mode p)
                                              :default (move-grid p state 0 -1)

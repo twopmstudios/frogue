@@ -49,8 +49,9 @@
 
 (defn event-hook [state ev _data]
   (case ev
-    :door-entered (do (util/defer restart!)
-                      state)
+    :door-entered (do
+                    (util/defer restart!)
+                    (update-in state [:progress :rooms] inc))
     :progress-event (assoc-in state [:progress :some-value] true)
     state))
 
