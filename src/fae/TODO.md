@@ -1,8 +1,11 @@
-- Implement music
 - Spawning other frog (after X rooms)
-- Spawning items to unlock the tongue, gills and jumping
-- Graphics for tongue licking enemies
 - Ending the game after X + Y rooms
+- Improve door generation (remove holes in the wall, try to prevent blocked doors)
+- Improve enemy generation (change based on how far into the game you are)
+- Position player near a door when entering any room that is not room 0
+- Spawning items to unlock the tongue, gills and jumping
+- Implement music
+- Graphics for tongue licking enemies
 - Win screen
 - Lose screen
 - UI -> inspect other actors
