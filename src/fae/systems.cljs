@@ -53,18 +53,21 @@
 
   (loop [events @events/inbox
          counter 0]
-    (when (> (count events) 0)
-      (println (util/format "pass %i: processing events" counter) events))
+    ;; (when (> (count events) 0)
+    ;;   (println (util/format "pass %i: processing events" counter) events))
 
     (events/clear-inbox!)
     (let [state' (update state :actors
                          (fn [actors]
                            (map (fn [node] (event-processing-system node state events))
                                 actors)))
-          state'' (reduce (fn [s [ev data]] (hook-fn s ev data)) state' events)]
-      (if (and (> (count @events/inbox) 0)
+          state'' (reduce (fn [s [ev data]] (hook-fn s ev data)) state' events)
+
+          events' @events/inbox]
+
+      (if (and (> (count events') 0)
                (< counter BAILOUT))
-        (recur @events/inbox (inc counter))
+        (recur events' (inc counter))
         (do
           (when (>= counter BAILOUT)
             (js/console.error (util/format "Event queue failed to empty after %i attempts" BAILOUT)))
