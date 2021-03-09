@@ -9,3 +9,7 @@
 
 (defn format [s & args]
   (apply gstring/format s args))
+
+(defn defer
+  ([f] (defer f 0))
+  ([f timeout] (js/setTimeout (fn [] (f)) timeout)))

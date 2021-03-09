@@ -9,6 +9,7 @@
    [fae.entities.door :as door]
    [fae.entities :as entities]
    [fae.world :as world]
+   [fae.util :as util]
    [fae.state :as state]
    [fae.systems :as sys]
    [fae.print :as print]))
@@ -48,7 +49,7 @@
 
 (defn event-hook [state ev _data]
   (case ev
-    :door-entered (do (js/setTimeout (fn [] (restart!)) 0)
+    :door-entered (do (util/defer restart!)
                       state)
     :progress-event (assoc-in state [:progress :some-value] true)
     state))
