@@ -60,6 +60,7 @@
   (let [[nx ny] [(+ (:x grid) x) (+ (:y grid) y)]]
     (if (or (has-status? actor :tired) ;; tired -> can't move
             (= 1 (world/get-tile state nx ny)) ;; walls -> can't move
+            (= nil (world/get-tile state nx ny)) ;; void -> can't move
             (and (= 2 (world/get-tile state nx ny)) ;; water & non-flying -> can't move
                  (not (util/in? (:traits actor) :flying))))
       actor
