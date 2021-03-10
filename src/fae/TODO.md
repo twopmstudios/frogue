@@ -2,13 +2,10 @@
   - only let R work on win / lose screens
 - Player stats persist between levels
   - Actually increase tongue length and damage
-- Credits
-  - https://freesound.org/people/InspectorJ/sounds/339677/
 - Log is dropping powerup events?
 
 - Stats block should indicate: gills, jump, fertilised status
-- Implement music (thx aj! @ajbooker)
-- Graphics for tongue licking enemies
+- Use music box tracks
 - Implement SFX
   - Excited ribit (mating :eyebrows:)
   - Death (weak ribit)
@@ -19,6 +16,7 @@
   - Toad
   - Beetle
     - Gain size from eating
+- Graphics for tongue licking enemies
 
 - Bonus
   - Biomes & dryness stat
