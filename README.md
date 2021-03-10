@@ -1,14 +1,34 @@
-# fae.cljs
+# 🐸 FROGUE
 
-A simple clojurescript game engine built on [pixi.js](https://github.com/pixijs/pixi.js/).
+![image](https://user-images.githubusercontent.com/5009316/110710156-1a46c080-8249-11eb-8a0b-cccc99060384.png)
+![image](https://user-images.githubusercontent.com/5009316/110710182-2763af80-8249-11eb-8a7f-7aa8a0809279.png)
+
+A simple clojurescript roguelike game & engine built on [pixi.js](https://github.com/pixijs/pixi.js/).
 
 Originally forked from https://github.com/yogthos/graviton.
 
+You be a frogge. Eat gnats and mosquitos but be afeared for he be hurting your eggs. Findeth another frogge then find a spotte to lay your eggs.
+
+### Instructions
+
+Arrows to move and attack. 
+WASD to lick enemies.
+J to enter JUMP mode, Arrows to choose jump direction.
+
+### Credits
+
+Programming, SFX & Art - Ben Follington ([@vivavolt](https://twitter.com/vivavolt))
+Design & Writing - Ricky James ([@iammonshushu](https://twitter.com/iammonshushu))
+Music - AJ Booker ([@ajbookr](https://twitter.com/ajbookr))
+
+SFX Sample Credit
+https://freesound.org/people/InspectorJ/sounds/339677/
+
 ## Overview
 
-While options like [play-cljc](https://github.com/oakes/play-cljc) and [chocolatier](https://github.com/alexkehayias/chocolatier) exist and are robust options, we were seeking a lightweight & fast moving solution for cljs game development.
+While [play-cljc](https://github.com/oakes/play-cljc) and [chocolatier](https://github.com/alexkehayias/chocolatier) exist and are robust options, we were seeking a lightweight & fast moving solution for cljs game development.
 
-So here we are.
+So here we are, we'll see if this engine gets used again.
 
 ## Development
 
