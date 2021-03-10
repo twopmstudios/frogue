@@ -36,9 +36,6 @@
   (set! (.-y gfx) y)
   gfx)
 
-(doseq [x {:a 1 :b 2}]
-  (println x))
-
 (defn instance [_state [x y]]
   (let [stats {:size (set-position (ui/text-field "HUD" 8 "04b03") 0 0)
                :eggs (set-position (ui/text-field "HUD" 8 "04b03") 0 10)

@@ -18,7 +18,7 @@
 (defn add-entity! [e]
   (vswap! to-add (fn [lst] (conj lst e))))
 
-(defn remove-entity [id]
+(defn remove-entity! [id]
   (vswap! to-remove (fn [lst] (conj lst id))))
 
 (defn remove-actors [state to-remove]

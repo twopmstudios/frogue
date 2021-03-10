@@ -73,9 +73,9 @@
                (set! (.-y spr) 160)
                spr)
         instructions (map-indexed (fn [idx text]
-                                    (let [text (text-field text 16 "04b03")]
+                                    (let [text (text-field text 8 "04b03")]
                                       (set! (.-x text) 10)
-                                      (set! (.-y text) (+ 185 (* 20 (inc idx))))
+                                      (set! (.-y text) (+ 222 (* 10 (inc idx))))
                                       text))
                                   text-lines)
         button       (start-button state graphics)]

@@ -1,6 +1,7 @@
 (ns fae.world
   (:require
    [fae.engine :as engine]
+   [fae.util :as util]
    [fae.grid :as grid]))
 
 (def EMPTY 0)
@@ -9,6 +10,7 @@
 (def DOOR 3)
 
 (def DIMENSIONS [18 14])
+(def MAX-LEVEL 10)
 
 (defn generate-walls [w h has-jump]
   (let [map (new js/ROT.Map.Cellular w h)]
@@ -44,7 +46,8 @@
                                (cond
                                  (and (on-boundary? w h x y)
                                       (or (= x (/ w 2))
-                                          (= y (/ h 2)))) DOOR
+                                          (= y (/ h 2)))
+                                      (not= num-rooms MAX-LEVEL)) DOOR
                                  (on-boundary? w h x y) WALL
                                  (= water 1) WATER
                                  (= wall 1) WALL

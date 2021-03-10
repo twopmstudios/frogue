@@ -48,7 +48,6 @@
   (state/init! game/start!)
   (r/render [game] (.getElementById js/document "app"))
   (let [s (:stage @state/db)]
-    (js/console.log @state/db)
     (. (. s -scale) set (* dpi scale))))
 
 (defn init! []

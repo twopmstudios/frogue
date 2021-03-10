@@ -1,10 +1,18 @@
-- Spawning other frog (after X rooms)
-- Ending the game after X + Y rooms
-- Spawning powerups for the bumping, tongue, gills and jumping
-- Implement music
+- Fully reset game state after gameover / win
+  - only let R work on win / lose screens
+- Player stats persist between levels
+
+- Stats block should indicate: gills, jump, fertilised status
+- Implement music (thx aj! @ajbooker)
 - Graphics for tongue licking enemies
-- Win screen
-- Lose screen
+- Implement SFX
+  - Begin the game
+  - Hurt
+  - Hop
+  - Ribit
+  - Excited ribit (mating :eyebrows:)
+  - Death (weak ribit)
+  - Tonguelash (whip)
 - UI -> inspect other actors
 - Additional enemies
   - Finch (formerly Sparrow)
@@ -16,3 +24,4 @@
 - Bonus
   - Spawn lily pads on water (no effect)
   - Biomes & dryness stat
+  - Reach end -> lay eggs -> create tadpoles -> maybe defend them?

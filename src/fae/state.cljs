@@ -19,6 +19,7 @@
    :game-state   :stopped
    :progress {:jump false
               :gills false
+              :fertilzed false
               :rooms 0
               :came-from nil}
    :background   [(world/instance @db)]

@@ -98,6 +98,8 @@
   (.removeChild stage (:graphics actor)))
 
 (defn clear-stage [{:keys [background actors foreground stage]}]
+  (doseq [c (.-children stage)]
+    (.removeChild stage c))
   (doseq [object (concat background actors foreground)]
     (remove-actor-from-stage stage object)))
 
@@ -190,8 +192,12 @@
 (defn init-scene [state]
   (add-background-to-stage state)
   (add-actors-to-stage state)
-  (add-foreground-to-stage state)
-  (js/console.log @state))
+  (add-foreground-to-stage state))
+
+(defn set-stage-offset [state [x y]]
+  (let [stage (:stage state)]
+    (set! (-> stage .-pivot .-x) x)
+    (set! (-> stage .-pivot .-y) y)))
 
 (defn add-stage-on-click-event [state]
   (let [{:keys [stage on-click on-drag width height]} @state]

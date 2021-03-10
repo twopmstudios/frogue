@@ -60,10 +60,17 @@
     (assoc p :traits [:flying])
     (assoc p :traits [])))
 
+(defn check-dead [p]
+  (when (<= (get-in p [:stats :eggs]) 0)
+    (e/trigger-event! :player-dead))
+
+  p)
+
 (defn update! [p state]
   (-> p
       (move/smooth-move)
-      (gills->flying-trait state)))
+      (gills->flying-trait state)
+      (check-dead)))
 
 (defn build-sprite []
   (let [spr (engine/sprite "at.png" [0 0])]
