@@ -1,9 +1,6 @@
 - Spawning other frog (after X rooms)
 - Ending the game after X + Y rooms
-- Improve door generation (remove holes in the wall, try to prevent blocked doors)
-- Improve enemy generation (change based on how far into the game you are)
-- Position player near a door when entering any room that is not room 0
-- Spawning items to unlock the tongue, gills and jumping
+- Spawning powerups for the bumping, tongue, gills and jumping
 - Implement music
 - Graphics for tongue licking enemies
 - Win screen
@@ -15,3 +12,7 @@
   - Toad
   - Beetle
     - Gain size from eating
+
+- Bonus
+  - Spawn lily pads on water (no effect)
+  - Biomes & dryness stat

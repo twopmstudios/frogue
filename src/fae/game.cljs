@@ -8,6 +8,7 @@
    [fae.entities.snake :as snake]
    [fae.entities.door :as door]
    [fae.entities :as entities]
+   [fae.events :as events]
    [fae.world :as world]
    [fae.util :as util]
    [fae.state :as state]
@@ -20,9 +21,10 @@
 
 (defn start! [state]
   (print/lifecycle "start!")
+  (doseq [door (world/find-all-spaces state world/DOOR)]
+    (entities/add-entity! (door/instance state door)))
   (doseq [to-spawn (:to-spawn state)]
     (entities/add-entity! (case to-spawn
-                            :door (door/instance state (world/find-space state world/DOOR))
                             :gnat (gnat/instance state (world/find-space state world/WATER))
                             :mosquito (mosquito/instance state (world/find-space state world/WATER))
                             :skink (skink/instance state (world/find-space state world/EMPTY))
@@ -41,18 +43,50 @@
                   (merge (select-keys (state/initial-state) [:game-state :background :actors :foreground])))))
     (engine/init-scene db)
     (engine/cancel-render-loop db)
+    (events/clear-inbox!)
     (vswap! db assoc :ticker (new js/PIXI.Ticker))
     (engine/init-render-loop db update!)
     (vswap! db assoc :game-state :started)
     (.start (:ticker @db))
     (vswap! db start!)))
 
-(defn event-hook [state ev _data]
+(defn determine-enemies-to-spawn [state]
+  (let [room (get-in state [:progress :rooms])]
+    (assoc state :to-spawn (case room
+                             0 [:gnat :gnat :mosquito]
+                             1 [:gnat :gnat :gnat :mosquito :mosquito]
+                             2 [:gnat :skink :gnat :mosquito] ;; spawn jump
+                             3 [:gnat :newt :skink :skink :gnat :mosquito]
+                             4 [:mosquito :mosquito :mosquito :mosquito :skink :skink :skink :newt] ;; spawn gilles
+                             5 [:snake :skink :newt :skink :gnat :gnat]))))
+
+(defn change-level! []
+  (print/lifecycle "change-level!")
+  (let [db state/db]
+    (vswap! db assoc :game-state :stopped)
+    (engine/clear-stage @db)
+    (vswap! db
+            (fn [current-state]
+              (-> current-state
+                  (merge (select-keys (state/initial-state) [:game-state :background :actors :foreground]))
+                  (determine-enemies-to-spawn))))
+    (engine/init-scene db)
+    (engine/cancel-render-loop db)
+    (events/clear-inbox!)
+    (vswap! db assoc :ticker (new js/PIXI.Ticker))
+    (engine/init-render-loop db update!)
+    (vswap! db assoc :game-state :started)
+    (.start (:ticker @db))
+    (vswap! db start!)))
+
+(defn event-hook [state ev data]
   (case ev
     :door-entered (do
-                    (util/defer restart!)
-                    (update-in state [:progress :rooms] inc))
-    :progress-event (assoc-in state [:progress :some-value] true)
+                    (util/defer change-level!)
+                    (-> state
+                        (update-in [:progress :rooms] inc)
+                        (assoc-in [:progress :came-from] (:side data))))
+    :progress-event (assoc-in state [:progress :gills] true)
     state))
 
 (defn update-actors [state]

@@ -17,29 +17,19 @@
   {:score        0
    :cancel-render false
    :game-state   :stopped
-   :progress {:jump true
+   :progress {:jump false
               :gills false
-              :rooms 0}
-   :background   [(world/instance)]
+              :rooms 0
+              :came-from nil}
+   :background   [(world/instance @db)]
    :foreground   []
-   :to-spawn [:door
-              :door
-              :door
-              :door
-              :mosquito
-              :mosquito
-              :mosquito
+   :to-spawn [:mosquito
               :gnat
-              :gnat
-              :gnat
-              :skink
-              :skink
-              :snake
-              :newt]
+              :gnat]
    :actors       [;;(fps/instance db [440 0])
-                  (hud/instance db [356 0])
-                  (game-log/instance db [356 210])
-                  (player/instance db [10 10])]})
+                  (hud/instance @db [322 0])
+                  (game-log/instance @db [322 210])
+                  (player/instance @db)]})
 
 
 (defn init! [start-fn]

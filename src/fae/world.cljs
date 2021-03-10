@@ -8,15 +8,17 @@
 (def WATER 2)
 (def DOOR 3)
 
-(defn generate-walls [w h]
+(def DIMENSIONS [18 14])
+
+(defn generate-walls [w h has-jump]
   (let [map (new js/ROT.Map.Cellular w h)]
-    (. map randomize 0.25)
+    (. map randomize (if has-jump 0.25 0.15))
     (js->clj (aget map "_map"))))
 
-(defn generate-water [w h]
+(defn generate-water [w h has-gills]
   (let [map (new js/ROT.Map.Cellular w h)]
-    (. map randomize 0.4)
-    (. map create nil)
+    (. map randomize (if has-gills 0.4 0.3))
+    (when has-gills (. map create nil))
     (. map create nil)
     (js->clj (aget map "_map"))))
 
@@ -26,13 +28,15 @@
       (= x (dec w))
       (= y (dec h))))
 
-(defn instance []
-  (let [dims [22 16]
-        [w h] dims
-        wall-map (generate-walls w h)
-        water-map (generate-water w h)]
+(defn instance [state]
+  (let [num-rooms (or (get-in state [:progress :rooms]) 0)
+        has-jump (or (get-in state [:progress :jump]) false)
+        has-gills (or (get-in state [:progress :gills]) false)
+        [w h] DIMENSIONS
+        wall-map (generate-walls w h has-jump)
+        water-map (generate-water w h has-gills)]
     {:id     :world
-     :dimensions dims
+     :dimensions DIMENSIONS
      :contents (vec (for [x (range 0 w)]
                       (vec (for [y (range 0 h)]
                              (let [wall (get-in wall-map [x y])
@@ -41,7 +45,6 @@
                                  (and (on-boundary? w h x y)
                                       (or (= x (/ w 2))
                                           (= y (/ h 2)))) DOOR
-                                 (and (= x 10) (= y 0)) 0
                                  (on-boundary? w h x y) WALL
                                  (= water 1) WATER
                                  (= wall 1) WALL
@@ -78,12 +81,19 @@
         contents (:contents world)]
     (get-in contents [x y])))
 
-(defn find-space [state wanted-terrain]
+(defn find-all-spaces [state wanted-terrain]
   (let [world (get-world state)
         [w h] (:dimensions world)
         candidates (filter some? (flatten (for [x (range 0 w)]
                                             (for [y (range 0 h)]
                                               (when (= wanted-terrain (get-tile state x y))
-                                                {:x x :y y})))))
-        pick (rand-nth candidates)]
-    [(:x pick) (:y pick)]))
+                                                {:x x :y y})))))]
+    (map (fn [{:keys [x y]}] [x y]) candidates)))
+
+(defn find-space [state wanted-terrain]
+  (let [candidates (find-all-spaces state wanted-terrain)]
+    (if (> (count candidates) 0)
+      (rand-nth candidates)
+      (do
+        (js/console.error "Could not find any spaces of terrain" wanted-terrain)
+        nil))))

@@ -2,6 +2,8 @@
   (:require
    [fae.engine :as engine]
    [fae.events :as events]
+   [fae.entities :as entities]
+   [fae.world :as world]
    [fae.behavior.id :as id]
    [fae.behavior.movement :as move]
    [fae.behavior.standard :as standard]
@@ -15,16 +17,39 @@
   (let [spr (engine/sprite "door.png" [0 0])]
     spr))
 
-(defn handle-bumped [g _state {bumpee :bumpee}]
-  (if (= bumpee (:id g))
-    (do (events/trigger-event! :door-entered)
-        g)
-    g))
+(defn invert-side [side]
+  (case side
+    :top :bottom
+    :bottom :top
+    :left :right
+    :right :left
+    nil))
 
+(defn handle-bumped [door state {bumpee :bumpee
+                                 bumper-id :bumper}]
+  (let [came-from (get-in state [:progress :came-from])
+        bumper (entities/get-by-id bumper-id state)]
+    (if (and (= :player (:type bumper))
+             (= bumpee (:id door))) ;; prevent player leaving through the door they entered through 
+      (if (not= came-from (invert-side (:side door)))
+        (do (events/trigger-event! :door-entered {:side (:side door)})
+            door)
+        (do (events/trigger-event! :log-entry-posted {:msg "In this life we can only go forward."})
+            door))
+      door)))
+
+(defn determine-side [x y [w h]]
+  (cond
+    (= x (dec w)) :right
+    (= x 0) :left
+    (= y (dec h)) :bottom
+    (= y 0) :top
+    :else nil))
 
 (defn instance [_state [x y]]
   {:id       (id/generate!)
    :type     :door
+   :side     (determine-side x y world/DIMENSIONS)
 
    :transform {:position {:x 0 :y 0}
                :rotation 0}

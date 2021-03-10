@@ -2,6 +2,7 @@
   (:require
    [fae.engine :as engine]
    [fae.events :as e]
+   [fae.world :as world]
    [fae.util :as util]
    [fae.behavior.movement :as move]
    [fae.behavior.standard :as standard]
@@ -72,69 +73,80 @@
                                   0x6ad0e8]))
     spr))
 
-(defn instance [_state [x y]]
-  {:id       (id/generate!)
-   :type     :player
-   :transform {:position {:x 0 :y 0}
-               :rotation 0}
-   :grid {:x 0 :y 0}
-   :graphics (build-sprite)
+(defn determine-spawn-pos [came-from]
+  (let [[w h] world/DIMENSIONS]
+    (case came-from
+      nil [(/ w 2) (/ h 2)]
+      :top [(/ w 2) (- h 2)]
+      :bottom [(/ w 2) 1]
+      :left [(- w 2) (/ h 2)]
+      :right [1 (/ h 2)])))
+
+(defn instance [state]
+  (let [came-from (get-in state [:progress :came-from])
+        [x y] (determine-spawn-pos came-from)]
+    {:id       (id/generate!)
+     :type     :player
+     :transform {:position {:x 0 :y 0}
+                 :rotation 0}
+     :grid {:x 0 :y 0}
+     :graphics (build-sprite)
   ;;  :rotate-constantly (/ (+ x y) 2000.0)
-   :z-index  1
-   :tongue {:active false
-            :target {:x 0 :y 0}}
+     :z-index  1
+     :tongue {:active false
+              :target {:x 0 :y 0}}
 
-   :mode :default
+     :mode :default
 
-   :stats {:eggs 10
-           :size 5
-           :lick 2
-           :tongue 2
-           :poisonous 0}
+     :stats {:eggs 10
+             :size 5
+             :lick 2
+             :tongue 2
+             :poisonous 0}
 
-   :traits []
-   :effects [:damage]
-   :status []
+     :traits []
+     :effects [:damage]
+     :status []
 
-   :inbox []
-   :events {:move-tick standard/handle-move-tick
+     :inbox []
+     :events {:move-tick standard/handle-move-tick
 
-            :jump-pressed (fn [p state] (if (get-in state [:progress :jump])
-                                          (assoc p :mode :jumping)
-                                          p))
+              :jump-pressed (fn [p state] (if (get-in state [:progress :jump])
+                                            (assoc p :mode :jumping)
+                                            p))
 
-            :move-up-pressed (fn [p state] (case (:mode p)
-                                             :default (move-grid p state 0 -1)
-                                             :jumping (jump-grid p state 0 -3)))
-            :move-down-pressed (fn [p state] (case (:mode p)
-                                               :default (move-grid p state 0 1)
-                                               :jumping (jump-grid p state 0 3)))
-            :move-right-pressed (fn [p state] (case (:mode p)
-                                                :default (move-grid p state 1 0)
-                                                :jumping (jump-grid p state 3 0)))
-            :move-left-pressed (fn [p state] (case (:mode p)
-                                               :default (move-grid p state -1 0)
-                                               :jumping (jump-grid p state -3 0)))
+              :move-up-pressed (fn [p state] (case (:mode p)
+                                               :default (move-grid p state 0 -1)
+                                               :jumping (jump-grid p state 0 -3)))
+              :move-down-pressed (fn [p state] (case (:mode p)
+                                                 :default (move-grid p state 0 1)
+                                                 :jumping (jump-grid p state 0 3)))
+              :move-right-pressed (fn [p state] (case (:mode p)
+                                                  :default (move-grid p state 1 0)
+                                                  :jumping (jump-grid p state 3 0)))
+              :move-left-pressed (fn [p state] (case (:mode p)
+                                                 :default (move-grid p state -1 0)
+                                                 :jumping (jump-grid p state -3 0)))
 
-            :tongue-up-pressed (fn [p state] (shoot-tongue p state :up))
-            :tongue-down-pressed (fn [p state] (shoot-tongue p state :down))
-            :tongue-left-pressed (fn [p state] (shoot-tongue p state :left))
-            :tongue-right-pressed (fn [p state] (shoot-tongue p state :right))
+              :tongue-up-pressed (fn [p state] (shoot-tongue p state :up))
+              :tongue-down-pressed (fn [p state] (shoot-tongue p state :down))
+              :tongue-left-pressed (fn [p state] (shoot-tongue p state :left))
+              :tongue-right-pressed (fn [p state] (shoot-tongue p state :right))
 
-            :damaged (fn [g state {id :id
-                                   amount :amount
-                                   source :source}]
-                       (if (= id (:id g))
-                         (let [pierced (- (get-in g [:stats :size]) amount)]
-                           (println "pierced" pierced)
-                           (e/trigger-event! :log-entry-posted {:msg (util/format "You took %i dmg from %s" amount source)})
-                           (if (< pierced 0)
-                             (-> g
-                                 (assoc-in [:stats :size] 0)
-                                 (update-in [:stats :eggs] (fn [e] (+ e pierced))))
-                             (assoc-in g [:stats :size] pierced)))
-                         g))
+              :damaged (fn [g state {id :id
+                                     amount :amount
+                                     source :source}]
+                         (if (= id (:id g))
+                           (let [pierced (- (get-in g [:stats :size]) amount)]
+                             (println "pierced" pierced)
+                             (e/trigger-event! :log-entry-posted {:msg (util/format "You took %i dmg from %s" amount source)})
+                             (if (< pierced 0)
+                               (-> g
+                                   (assoc-in [:stats :size] 0)
+                                   (update-in [:stats :eggs] (fn [e] (+ e pierced))))
+                               (assoc-in g [:stats :size] pierced)))
+                           g))
 
-            :bump standard/handle-bumped}
-   :init   (partial init! [x y])
-   :update update!})
+              :bump standard/handle-bumped}
+     :init   (partial init! [x y])
+     :update update!}))
