@@ -15,6 +15,7 @@
    [fae.entities :as entities]
    [fae.events :as events]
    [fae.world :as world]
+   [fae.sound :as sound]
    [fae.util :as util]
    [fae.state :as state]
    [fae.systems :as sys]
@@ -61,6 +62,7 @@
     (vswap! db assoc :ticker (new js/PIXI.Ticker))
     (engine/init-render-loop db update!)
     (vswap! db assoc :game-state :started)
+    (sound/change-music! :game)
     (.start (:ticker @db))
     (vswap! db start!)))
 
@@ -108,6 +110,7 @@
     (events/clear-inbox!)
     (vswap! db assoc :ticker (new js/PIXI.Ticker))
     (engine/init-render-loop db update!)
+    (sound/change-music! :game-over)
     (.addChild (:stage @db) (let [spr (engine/sprite "game-over.png" [0.5 0.5])]
                               (set! (.-x spr) 240)
                               (set! (.-y spr) 135)
@@ -122,6 +125,7 @@
     (events/clear-inbox!)
     (vswap! db assoc :ticker (new js/PIXI.Ticker))
     (engine/init-render-loop db update!)
+    (sound/change-music! :win)
     (.addChild (:stage @db) (let [spr (engine/sprite "win.png" [0.5 0.5])]
                               (set! (.-x spr) 240)
                               (set! (.-y spr) 135)
@@ -129,7 +133,10 @@
 
 (defn event-hook [state ev data]
   (case ev
+    :bump (do (sound/play! :slap false)
+              state)
     :door-entered (do
+                    (sound/play! :door false)
                     (util/defer change-level!)
                     (-> state
                         (update-in [:progress :rooms] inc)
@@ -141,10 +148,11 @@
     :eggs-fertilized (do
                        (events/trigger-event! :doors-unlocked)
                        (assoc-in state [:progress :fertilzed] true))
-    :powerup-get (case (:kind data)
-                   :jump (assoc-in state [:progress :jump] true)
-                   :gills (assoc-in state [:progress :gills] true)
-                   :tongue-length state) ;; TODO: think about how to persist stat upgrades across levels
+    :powerup-get (do (sound/play! :powerup false)
+                     (case (:kind data)
+                       :jump (assoc-in state [:progress :jump] true)
+                       :gills (assoc-in state [:progress :gills] true)
+                       :tongue-length state)) ;; TODO: think about how to persist stat upgrades across levels
     :progress-event (assoc-in state [:progress :gills] true)
     state))
 

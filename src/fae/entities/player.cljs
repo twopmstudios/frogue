@@ -4,6 +4,7 @@
    [fae.events :as e]
    [fae.world :as world]
    [fae.util :as util]
+   [fae.sound :as sound]
    [fae.behavior.movement :as move]
    [fae.behavior.standard :as standard]
    [fae.behavior.id :as id]))
@@ -42,6 +43,7 @@
         new-pos {:x (+ (:x curr-pos) tx) :y (+ (:y curr-pos) ty)}]
 
     (e/trigger-event! :move-tick)
+    (sound/play! :lick false)
     (println "tongue" new-pos)
     (when-let [target (move/raycast [(:x curr-pos) (:y curr-pos)] state dir tongue)]
       (when (not= target :wall)
@@ -122,18 +124,31 @@
                                             (assoc p :mode :jumping)
                                             p))
 
-              :move-up-pressed (fn [p state] (case (:mode p)
-                                               :default (move-grid p state 0 -1)
-                                               :jumping (jump-grid p state 0 -3)))
-              :move-down-pressed (fn [p state] (case (:mode p)
-                                                 :default (move-grid p state 0 1)
-                                                 :jumping (jump-grid p state 0 3)))
-              :move-right-pressed (fn [p state] (case (:mode p)
-                                                  :default (move-grid p state 1 0)
-                                                  :jumping (jump-grid p state 3 0)))
-              :move-left-pressed (fn [p state] (case (:mode p)
-                                                 :default (move-grid p state -1 0)
-                                                 :jumping (jump-grid p state -3 0)))
+              :move-up-pressed (fn [p state]
+
+                                 (case (:mode p)
+                                   :default (do (sound/play! :step false)
+                                                (move-grid p state 0 -1))
+                                   :jumping (do (sound/play! :boing false)
+                                                (jump-grid p state 0 -3))))
+              :move-down-pressed (fn [p state]
+                                   (case (:mode p)
+                                     :default (do (sound/play! :step false)
+                                                  (move-grid p state 0 1))
+                                     :jumping (do (sound/play! :boing false)
+                                                  (jump-grid p state 0 3))))
+              :move-right-pressed (fn [p state]
+                                    (case (:mode p)
+                                      :default (do (sound/play! :step false)
+                                                   (move-grid p state 1 0))
+                                      :jumping (do (sound/play! :boing false)
+                                                   (jump-grid p state 3 0))))
+              :move-left-pressed (fn [p state]
+                                   (case (:mode p)
+                                     :default (do (sound/play! :step false)
+                                                  (move-grid p state -1 0))
+                                     :jumping (do (sound/play! :boing false)
+                                                  (jump-grid p state -3 0))))
 
               :tongue-up-pressed (fn [p state] (shoot-tongue p state :up))
               :tongue-down-pressed (fn [p state] (shoot-tongue p state :down))

@@ -53,7 +53,8 @@
                                          (vswap! state assoc :game-state :started)
                                          (engine/add-stage-on-click-event state)
                                          (engine/init-scene state)
-                                         (sound/play! :boing))))]
+                                         (sound/change-music! :game)
+                                         (sound/play! :croak false))))]
     (set! (.-interactive graphics) true)
     (set! (.-buttonMode graphics) true)
     graphics))

@@ -1,18 +1,17 @@
 - Fully reset game state after gameover / win
   - only let R work on win / lose screens
 - Player stats persist between levels
+  - Actually increase tongue length and damage
+- Credits
+  - https://freesound.org/people/InspectorJ/sounds/339677/
+- Log is dropping powerup events?
 
 - Stats block should indicate: gills, jump, fertilised status
 - Implement music (thx aj! @ajbooker)
 - Graphics for tongue licking enemies
 - Implement SFX
-  - Begin the game
-  - Hurt
-  - Hop
-  - Ribit
   - Excited ribit (mating :eyebrows:)
   - Death (weak ribit)
-  - Tonguelash (whip)
 - UI -> inspect other actors
 - Additional enemies
   - Finch (formerly Sparrow)
@@ -22,6 +21,5 @@
     - Gain size from eating
 
 - Bonus
-  - Spawn lily pads on water (no effect)
   - Biomes & dryness stat
   - Reach end -> lay eggs -> create tadpoles -> maybe defend them?
