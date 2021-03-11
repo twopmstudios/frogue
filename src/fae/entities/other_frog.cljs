@@ -25,12 +25,13 @@
     (if (and (= :player (:type bumper))
              (= bumpee (:id frog)))
       (do
-        (events/trigger-event! :eggs-fertilized)
         (events/trigger-event! :log-entry-posted {:msg "You bump & grind with the frog"})
         (events/trigger-event! :log-entry-posted {:msg "Your eggs feel... uh... fertile"})
+        (events/trigger-event! :eggs-fertilized)
         (entities/remove-entity! (:id frog))
         frog)
       frog)))
+
 
 (defn instance [_state [x y]]
   {:id       (id/generate!)

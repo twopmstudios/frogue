@@ -30,6 +30,19 @@
       (= x (dec w))
       (= y (dec h))))
 
+(defn in-doorway? [w h x y]
+  (or (and (= x (/ w 2))
+           (or (= y 1)
+               (= y 2)
+               (= y (- h 2))
+               (= y (- h 3))))
+
+      (and (= y (/ h 2))
+           (or (= x 1)
+               (= x 2)
+               (= x (- w 2))
+               (= x (- w 3))))))
+
 (defn instance [state]
   (let [num-rooms (or (get-in state [:progress :rooms]) 0)
         has-jump (or (get-in state [:progress :jump]) false)
@@ -50,6 +63,7 @@
                                           (= y (/ h 2)))
                                       (not= num-rooms MAX-LEVEL)) DOOR
                                  (on-boundary? w h x y) WALL
+                                 (in-doorway? w h x y) EMPTY
                                  (= water 1) WATER
                                  (= wall 1) WALL
                                  :else EMPTY))))))

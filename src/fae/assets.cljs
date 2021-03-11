@@ -13,6 +13,8 @@
    :mosquito "assets/mosquito.png"
    :skink "assets/skink.png"
    :newt "assets/newt.png"
+   :toad "assets/toad.png"
+   :beetle "assets/beetle.png"
    :snake "assets/snake.png"
    :dot "assets/dot.png"
    :wall "assets/wall.png"

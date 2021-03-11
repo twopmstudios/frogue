@@ -138,6 +138,10 @@
 
               :gained-poison standard/handle-gained-poison
 
+              :player-healed (fn [p state]
+                               (e/trigger-event! :log-entry-posted {:msg "You gain +1 SIZE"})
+                               (update-in p [:stats :size] inc))
+
               :powerup-get (fn [p state {kind :kind}]
                              (if (= kind :tongue-length)
                                (update-in p [:stats :tongue] inc)

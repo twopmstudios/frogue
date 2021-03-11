@@ -6,6 +6,8 @@
    [fae.entities.skink :as skink]
    [fae.entities.newt :as newt]
    [fae.entities.snake :as snake]
+   [fae.entities.toad :as toad]
+   [fae.entities.beetle :as beetle]
    [fae.entities.door :as door]
    [fae.entities.player :as player]
    [fae.entities.jump-powerup :as jump-powerup]
@@ -48,6 +50,8 @@
                               :mosquito (mosquito/instance state' (world/find-space state' world/WATER))
                               :skink (skink/instance state' (world/find-space state' world/EMPTY))
                               :snake (snake/instance state' (world/find-space state' world/EMPTY))
+                              :toad (toad/instance state' (world/find-space state' world/EMPTY))
+                              :beetle (beetle/instance state' (world/find-space state' world/EMPTY))
                               :newt (newt/instance state' (world/find-space state' world/EMPTY)))))
     state'))
 
@@ -69,17 +73,17 @@
 (defn determine-enemies-to-spawn [state]
   (let [room (get-in state [:progress :rooms])]
     (assoc state :to-spawn (case room
-                             0 [:gnat :gnat :mosquito :mosquito]
-                             1 [:gnat :gnat :gnat :mosquito :mosquito :mosquito]
-                             2 [:gnat :skink :gnat :mosquito :jump-powerup] ;; spawn jump
-                             3 [:gnat :newt :skink :skink :gnat :mosquito :tongue-powerup] ;; spawn tongue buff
+                             0 [:gnat :beetle :mosquito :mosquito]
+                             1 [:gnat :beetle :gnat :mosquito :mosquito :mosquito]
+                             2 [:gnat :skink :beetle :gnat :mosquito :jump-powerup] ;; spawn jump
+                             3 [:gnat :newt :skink :beetle :skink :gnat :mosquito :tongue-powerup] ;; spawn tongue buff
                              4 [:mosquito :mosquito :mosquito :mosquito :skink :skink :skink :newt :gills-powerup] ;; spawn gilles
-                             5 [:snake :skink :newt :skink :gnat :gnat :tongue-powerup] ;; spawn tongue buff
-                             6 [:gnat :gnat :gnat :other-frog] ;; other frog
-                             7 [:snake :snake :snake :snake :gnat] ;; spawn bump buff
+                             5 [:snake :skink :newt :skink :toad :gnat :gnat :tongue-powerup] ;; spawn tongue buff
+                             6 [:gnat :gnat :beetle :gnat :other-frog] ;; other frog
+                             7 [:snake :snake :toad :toad :beetle :snake :snake :gnat] ;; spawn bump buff
                              8 [:skink :newt :skink :newt :skink :mosquito :mosquito :gnat]
-                             9 [:newt :newt :newt :newt :mosquito :mosquito :mosquito] ;; spawn bump buff
-                             10 [:gnat :gnat :gnat :lilypad] ;; win game
+                             9 [:newt :newt :newt :newt :toad :mosquito :mosquito :mosquito] ;; spawn bump buff
+                             10 [:gnat :gnat :beetle :gnat :lilypad] ;; win game
                              []))))
 
 (defn change-level! []
@@ -143,7 +147,9 @@
                        (util/defer game-over!))
                      state)
     :eggs-fertilized (do
-                       (events/trigger-event! :doors-unlocked)
+                       (util/defer (fn []
+                                     (events/trigger-event! :log-entry-posted {:msg "The doors suddenly unlock."})
+                                     (events/trigger-event! :doors-unlocked)))
                        (assoc-in state [:progress :fertilzed] true))
     :powerup-get (do (sound/play! :powerup false)
                      (case (:kind data)
