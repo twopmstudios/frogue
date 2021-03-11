@@ -82,10 +82,10 @@
                                   0x6ad0e8]))
     spr))
 
-(defn determine-spawn-pos [came-from]
+(defn determine-spawn-pos [state came-from]
   (let [[w h] world/DIMENSIONS]
     (case came-from
-      nil [(/ w 2) (/ h 2)]
+      nil (world/find-space state world/EMPTY)
       :top [(/ w 2) (- h 2)]
       :bottom [(/ w 2) 1]
       :left [(- w 2) (/ h 2)]
@@ -93,7 +93,7 @@
 
 (defn instance [state]
   (let [came-from (get-in state [:progress :came-from])
-        [x y] (determine-spawn-pos came-from)]
+        [x y] (determine-spawn-pos state came-from)]
     {:id       (id/generate!)
      :type     :player
      :transform {:position {:x 0 :y 0}
@@ -107,11 +107,12 @@
 
      :mode :default
 
-     :stats {:eggs 10
-             :size 5
-             :lick 2
-             :tongue 2
-             :poisonous 0}
+     :stats (or (get-in state [:progress :player])
+                {:eggs 10
+                 :size 5
+                 :lick 2
+                 :tongue 2
+                 :poisonous 0})
 
      :traits []
      :effects [:damage]
@@ -123,6 +124,11 @@
               :jump-pressed (fn [p state] (if (get-in state [:progress :jump])
                                             (assoc p :mode :jumping)
                                             p))
+
+              :powerup-get (fn [p state {kind :kind}]
+                             (if (= kind :tongue-length)
+                               (update-in p [:stats :tongue] inc)
+                               p))
 
               :move-up-pressed (fn [p state]
 

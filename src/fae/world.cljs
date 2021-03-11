@@ -37,6 +37,7 @@
         [w h] DIMENSIONS
         wall-map (generate-walls w h has-jump)
         water-map (generate-water w h has-gills)]
+
     {:id     :world
      :dimensions DIMENSIONS
      :contents (vec (for [x (range 0 w)]

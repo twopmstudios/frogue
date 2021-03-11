@@ -7,6 +7,7 @@
    [fae.entities.newt :as newt]
    [fae.entities.snake :as snake]
    [fae.entities.door :as door]
+   [fae.entities.player :as player]
    [fae.entities.jump-powerup :as jump-powerup]
    [fae.entities.gills-powerup :as gills-powerup]
    [fae.entities.tongue-powerup :as tongue-powerup]
@@ -28,24 +29,27 @@
 (defn start! [state]
   (print/lifecycle "start!")
 
-  (let [end-level (util/in? (get state :to-spawn) :end-game)]
-    (when (not end-level)
-      (doseq [door (world/find-all-spaces state world/DOOR)]
-        (entities/add-entity! (door/instance state door)))))
+  (let [state' (assoc state :background [(world/instance state)])]
+    (let [end-level (util/in? (get state' :to-spawn) :end-game)]
+      (when (not end-level)
+        (doseq [door (world/find-all-spaces state' world/DOOR)]
+          (entities/add-entity! (door/instance state' door)))))
 
-  (doseq [to-spawn (:to-spawn state)]
-    (entities/add-entity! (case to-spawn
-                            :jump-powerup (jump-powerup/instance state (world/find-space state world/EMPTY))
-                            :gills-powerup (gills-powerup/instance state (world/find-space state world/EMPTY))
-                            :tongue-powerup (tongue-powerup/instance state (world/find-space state world/EMPTY))
-                            :other-frog (other-frog/instance state (world/find-space state world/EMPTY))
-                            :lilypad (lilypad/instance state (world/find-space state world/WATER))
-                            :gnat (gnat/instance state (world/find-space state world/WATER))
-                            :mosquito (mosquito/instance state (world/find-space state world/WATER))
-                            :skink (skink/instance state (world/find-space state world/EMPTY))
-                            :snake (snake/instance state (world/find-space state world/EMPTY))
-                            :newt (newt/instance state (world/find-space state world/EMPTY)))))
-  state)
+    (entities/add-entity! (player/instance state'))
+
+    (doseq [to-spawn (:to-spawn state')]
+      (entities/add-entity! (case to-spawn
+                              :jump-powerup (jump-powerup/instance state' (world/find-space state' world/EMPTY))
+                              :gills-powerup (gills-powerup/instance state' (world/find-space state' world/EMPTY))
+                              :tongue-powerup (tongue-powerup/instance state' (world/find-space state' world/EMPTY))
+                              :other-frog (other-frog/instance state' (world/find-space state' world/EMPTY))
+                              :lilypad (lilypad/instance state' (world/find-space state' world/WATER))
+                              :gnat (gnat/instance state' (world/find-space state' world/WATER))
+                              :mosquito (mosquito/instance state' (world/find-space state' world/WATER))
+                              :skink (skink/instance state' (world/find-space state' world/EMPTY))
+                              :snake (snake/instance state' (world/find-space state' world/EMPTY))
+                              :newt (newt/instance state' (world/find-space state' world/EMPTY)))))
+    state'))
 
 (defn restart! []
   (print/lifecycle "restart!")
@@ -55,16 +59,12 @@
     (vswap! db
             (fn [current-state]
               (-> current-state
-                  (merge (select-keys (state/initial-state) [:game-state :background :actors :foreground])))))
+                  (merge (select-keys (state/initial-state) [:progress :game-state :scene :to-spawn :background :actors :foreground])))))
+    (vswap! db start!)
     (engine/init-scene db)
-    (engine/cancel-render-loop db)
     (events/clear-inbox!)
-    (vswap! db assoc :ticker (new js/PIXI.Ticker))
-    (engine/init-render-loop db update!)
     (vswap! db assoc :game-state :started)
-    (sound/change-music! :game)
-    (.start (:ticker @db))
-    (vswap! db start!)))
+    (sound/change-music! :game)))
 
 (defn determine-enemies-to-spawn [state]
   (let [room (get-in state [:progress :rooms])]
@@ -92,24 +92,17 @@
               (-> current-state
                   (merge (select-keys (state/initial-state) [:game-state :background :actors :foreground]))
                   (determine-enemies-to-spawn))))
+    (vswap! db start!)
     (engine/init-scene db)
-    (engine/cancel-render-loop db)
     (events/clear-inbox!)
-    (vswap! db assoc :ticker (new js/PIXI.Ticker))
-    (engine/init-render-loop db update!)
-    (vswap! db assoc :game-state :started)
-    (.start (:ticker @db))
-    (vswap! db start!)))
+    (vswap! db assoc :game-state :started)))
 
 (defn game-over! []
   (print/lifecycle "game-over!")
   (let [db state/db]
-    (vswap! db assoc :game-state :game-over)
+    (vswap! db assoc :scene :game-over)
     (engine/clear-stage @db)
-    (engine/cancel-render-loop db)
     (events/clear-inbox!)
-    (vswap! db assoc :ticker (new js/PIXI.Ticker))
-    (engine/init-render-loop db update!)
     (sound/change-music! :game-over)
     (.addChild (:stage @db) (let [spr (engine/sprite "game-over.png" [0.5 0.5])]
                               (set! (.-x spr) 240)
@@ -119,12 +112,9 @@
 (defn game-won! []
   (print/lifecycle "game-won!")
   (let [db state/db]
-    (vswap! db assoc :game-state :game-won)
+    (vswap! db assoc :scene :game-won)
     (engine/clear-stage @db)
-    (engine/cancel-render-loop db)
     (events/clear-inbox!)
-    (vswap! db assoc :ticker (new js/PIXI.Ticker))
-    (engine/init-render-loop db update!)
     (sound/change-music! :win)
     (.addChild (:stage @db) (let [spr (engine/sprite "win.png" [0.5 0.5])]
                               (set! (.-x spr) 240)
@@ -135,15 +125,22 @@
   (case ev
     :bump (do (sound/play! :slap false)
               state)
+    :restart-pressed (do (println "hello?" (:scene state))
+                         (when (or (= :game-won (:scene state))
+                                   (= :game-over (:scene state)))
+                           (util/defer restart!))
+                         state)
     :door-entered (do
                     (sound/play! :door false)
                     (util/defer change-level!)
                     (-> state
+                        (assoc-in [:progress :player] (:stats (entities/get-by-type :player state)))
                         (update-in [:progress :rooms] inc)
                         (assoc-in [:progress :came-from] (:side data))))
     :win-game (do (util/defer game-won!)
                   state)
-    :player-dead (do (util/defer game-over!)
+    :player-dead (do (when (not= :game-over (:scene state))
+                       (util/defer game-over!))
                      state)
     :eggs-fertilized (do
                        (events/trigger-event! :doors-unlocked)
@@ -152,7 +149,7 @@
                      (case (:kind data)
                        :jump (assoc-in state [:progress :jump] true)
                        :gills (assoc-in state [:progress :gills] true)
-                       :tongue-length state)) ;; TODO: think about how to persist stat upgrades across levels
+                       state))
     :progress-event (assoc-in state [:progress :gills] true)
     state))
 

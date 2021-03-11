@@ -18,7 +18,7 @@
     (.endFill)))
 
 (defn update! [{text :graphics log :log :as p} _state]
-  (let [lines (str/join "\n" (reverse log))]
+  (let [lines (str/join "\n" log)]
     (set! (.-text text) lines))
   p)
 
@@ -26,11 +26,15 @@
   {:id       (id/generate!)
    :type     :fps
    :transform {:position {:x x :y y}}
-   :log '()
+   :log []
    :graphics (ui/text-field "" 8 "04b03")
    :z-index  1
 
    :events {:log-entry-posted (fn [p _state {msg :msg}]
-                                (update p :log (fn [log] (take 8 (conj log msg)))))}
+                                (update p :log (fn [log] (vec (take-last 8 (conj log msg))))))}
    :init     (fn [p _state] p)
    :update update!})
+
+(vec (take-last 8 (conj [1 2 3 4 5 9 9 9] 6)))
+
+(conj '(1 2 3) 4)

@@ -23,12 +23,22 @@
         tongue-val (get-in player [:stats :tongue])
 
         poisonous-txt (:poisonous stats)
-        poisonous-val (get-in player [:stats :poisonous])]
+        poisonous-val (get-in player [:stats :poisonous])
+
+
+        gills-txt (:gills stats)
+        jump-txt (:jump stats)]
     (set! (.-text size-txt) (str "SIZE " size-val))
     (set! (.-text eggs-txt) (str "EGGS " eggs-val))
     (set! (.-text lick-txt) (str "LICK " lick-val))
     (set! (.-text tongue-txt) (str "TONGUE " tongue-val))
     (set! (.-text poisonous-txt) (str "POISON " poisonous-val))
+    (set! (.-text gills-txt) (if (get-in state [:progress :gills])
+                               "GILLS YES"
+                               ""))
+    (set! (.-text jump-txt) (if (get-in state [:progress :jump])
+                              "JUMP - J to activate"
+                              ""))
     hud))
 
 (defn set-position [gfx x y]
@@ -41,7 +51,9 @@
                :eggs (set-position (ui/text-field "HUD" 8 "04b03") 0 10)
                :lick (set-position (ui/text-field "HUD" 8 "04b03") 0 20)
                :tongue (set-position (ui/text-field "HUD" 8 "04b03") 0 30)
-               :poisonous (set-position (ui/text-field "HUD" 8 "04b03") 0 40)}]
+               :poisonous (set-position (ui/text-field "HUD" 8 "04b03") 0 40)
+               :jump (set-position (ui/text-field "HUD" 8 "04b03") 0 50)
+               :gills (set-position (ui/text-field "HUD" 8 "04b03") 0 60)}]
     {:id       (id/generate!)
      :type     :fps
      :transform {:position {:x x :y y}}

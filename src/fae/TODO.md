@@ -1,8 +1,7 @@
-- Fully reset game state after gameover / win
-  - only let R work on win / lose screens
-- Player stats persist between levels
-  - Actually increase tongue length and damage
-- Log is dropping powerup events?
+- Doors can get blocked by terrain
+- Levels can be impossible because of water (can't reach door or powerup)
+  - Too hard to fix, give a disclaimer in the description
+- Allow toggling of sounds
 
 - Stats block should indicate: gills, jump, fertilised status
 - Use music box tracks
