@@ -41,6 +41,7 @@
    :events {:move-tick standard/handle-move-tick
             :licked-target standard/handle-licked-target
             :damaged standard/handle-damaged
+            :gained-poison standard/handle-gained-poison
             :bump standard/handle-bumped}
    :init   (partial init! [x y])
    :update update!})

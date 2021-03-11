@@ -25,6 +25,14 @@
     (lick/handle g dmg)
     g))
 
+(defn handle-gained-poison
+  [p state {id :id}]
+  (if (= id (:id p))
+    (-> p
+        (update-in [:stats :poisonous] (fnil inc 0))
+        (update :effects (fn [fx] (conj fx :poison))))
+    p))
+
 (defn handle-damaged
   [g state {id :id
             amount :amount

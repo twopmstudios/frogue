@@ -114,9 +114,15 @@
   ;; if actor has poisonous stat -> deal damage to other-id
     (when-let [dmg (get-in actor [:stats :poisonous])]
       (when (> dmg 0)
-        (events/trigger-event! :damaged {:id other-id
-                                         :amount dmg
-                                         :source "poison"})))
+        (if (= (:type bumper) :player)
+          (events/trigger-event! :log-entry-posted {:msg (util/format "You touched poison!")})
+          (events/trigger-event! :log-entry-posted {:msg (util/format "%s touched poison!" (:type bumper))}))
+
+        (events/trigger-event! :damaged {:id (:id bumper)
+                                         :amount (get-in actor [:stats :poisonous])
+                                         :source "poison"})
+
+        (events/trigger-event! :gained-poison {:id (:id bumper)})))
 
     (reduce (fn [act e]
               (case e
@@ -132,6 +138,7 @@
                              (events/trigger-event! :log-entry-posted {:msg (util/format "You are bleeding (3 turns)")})
                              (events/trigger-event! :log-entry-posted {:msg (util/format "%s is bleeding (3 turns)" (:type actor))}))
                            (update act :status (fn [s] (conj s [:bleeding 3]))))
+
                 :venom (do
                          (if (= (:type actor) :player)
                            (events/trigger-event! :log-entry-posted {:msg (util/format "You gain +1 poison!")})
@@ -140,7 +147,10 @@
                          (events/trigger-event! :damaged {:id (:id actor)
                                                           :amount 1
                                                           :source "venom"})
-                         (update-in act [:stats :poisonous] (fnil inc 0)))
+
+                         ;; TODO: remove the update-in and handle event in all actors
+                         (events/trigger-event! :gained-poison {:id (:id actor)})
+                         act)
                 act))
             actor effects)))
 

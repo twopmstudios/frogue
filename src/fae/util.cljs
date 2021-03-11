@@ -7,6 +7,11 @@
   [coll elm]
   (boolean (some #(= elm %) coll)))
 
+(defn conj-if-not-in [xs x]
+  (if (in? xs x)
+    xs
+    (conj xs x)))
+
 (defn format [s & args]
   (apply gstring/format s args))
 

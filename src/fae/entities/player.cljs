@@ -68,11 +68,17 @@
 
   p)
 
+(defn set-tint! [p tint]
+  (let [spr (:graphics p)]
+    (set! (.-tint spr) tint)
+    p))
+
 (defn update! [p state]
   (-> p
       (move/smooth-move)
       (gills->flying-trait state)
-      (check-dead)))
+      (check-dead)
+      (set-tint! (get-in p [:stats :color]))))
 
 (defn build-sprite []
   (let [spr (engine/sprite "at.png" [0 0])]
@@ -81,6 +87,7 @@
                                   0x895013
                                   0x6ad0e8]))
     spr))
+
 
 (defn determine-spawn-pos [state came-from]
   (let [[w h] world/DIMENSIONS]
@@ -112,10 +119,14 @@
                  :size 5
                  :lick 2
                  :tongue 2
-                 :poisonous 0})
+                 :poisonous 0
+                 :color (rand-nth [0x6daa2c
+                                   0xedd40c
+                                   0x895013
+                                   0x6ad0e8])})
 
      :traits []
-     :effects [:damage]
+     :effects #{:damage}
      :status []
 
      :inbox []
@@ -124,6 +135,8 @@
               :jump-pressed (fn [p state] (if (get-in state [:progress :jump])
                                             (assoc p :mode :jumping)
                                             p))
+
+              :gained-poison standard/handle-gained-poison
 
               :powerup-get (fn [p state {kind :kind}]
                              (if (= kind :tongue-length)

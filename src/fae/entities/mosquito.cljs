@@ -41,6 +41,7 @@
 
    :inbox []
    :events {:move-tick standard/handle-move-tick
+            :gained-poison standard/handle-gained-poison
             :licked-target standard/handle-licked-target
             :damaged standard/handle-damaged
             :bump standard/handle-bumped}
