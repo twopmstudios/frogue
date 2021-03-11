@@ -1,9 +1,6 @@
-- Doors can get blocked by terrain
-- Levels can be impossible because of water (can't reach door or powerup)
-  - Too hard to fix, give a disclaimer in the description
 - Allow toggling of sounds
 
-- Stats block should indicate: gills, jump, fertilised status
+- Stats block should indicate: fertilised status
 - Use music box tracks
 - Implement SFX
   - Excited ribit (mating :eyebrows:)
@@ -12,10 +9,6 @@
 - Additional enemies
   - Finch (formerly Sparrow)
   - Magpie
-  - Toad
-  - Beetle
-    - Gain size from eating
-- Graphics for tongue licking enemies
 
 - Bonus
   - Biomes & dryness stat
