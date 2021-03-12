@@ -27,7 +27,8 @@
 
 
         gills-txt (:gills stats)
-        jump-txt (:jump stats)]
+        jump-txt (:jump stats)
+        fertilized-txt (:fertilized stats)]
     (set! (.-text size-txt) (str "SIZE " size-val))
     (set! (.-text eggs-txt) (str "EGGS " eggs-val))
     (set! (.-text lick-txt) (str "LICK " lick-val))
@@ -39,6 +40,9 @@
     (set! (.-text jump-txt) (if (get-in state [:progress :jump])
                               "JUMP - J to activate"
                               ""))
+    (set! (.-text fertilized-txt) (if (get-in state [:progress :fertilzed])
+                                    "EGGS FERTILIZED"
+                                    ""))
     hud))
 
 (defn set-position [gfx x y]
@@ -53,7 +57,8 @@
                :tongue (set-position (ui/text-field "HUD" 8 "04b03") 0 30)
                :poisonous (set-position (ui/text-field "HUD" 8 "04b03") 0 40)
                :jump (set-position (ui/text-field "HUD" 8 "04b03") 0 50)
-               :gills (set-position (ui/text-field "HUD" 8 "04b03") 0 60)}]
+               :gills (set-position (ui/text-field "HUD" 8 "04b03") 0 60)
+               :fertilized (set-position (ui/text-field "HUD" 8 "04b03") 0 70)}]
     {:id       (id/generate!)
      :type     :fps
      :transform {:position {:x x :y y}}

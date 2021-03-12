@@ -107,7 +107,7 @@
     (vswap! db assoc :scene :game-over)
     (engine/clear-stage @db)
     (events/clear-inbox!)
-    (sound/change-music! :game-over)
+    (sound/play-music-with-intro! :game-over-intro :game-over)
     (.addChild (:stage @db) (let [spr (engine/sprite "game-over.png" [0.5 0.5])]
                               (set! (.-x spr) 240)
                               (set! (.-y spr) 135)
@@ -119,7 +119,7 @@
     (vswap! db assoc :scene :game-won)
     (engine/clear-stage @db)
     (events/clear-inbox!)
-    (sound/change-music! :win)
+    (sound/play-music-with-intro! :win-intro :win)
     (.addChild (:stage @db) (let [spr (engine/sprite "win.png" [0.5 0.5])]
                               (set! (.-x spr) 240)
                               (set! (.-y spr) 135)
@@ -129,11 +129,11 @@
   (case ev
     :bump (do (sound/play! :slap false)
               state)
-    :restart-pressed (do (println "hello?" (:scene state))
-                         (when (or (= :game-won (:scene state))
-                                   (= :game-over (:scene state)))
-                           (util/defer restart!))
-                         state)
+    :restart-pressed (do
+                       (when (or (= :game-won (:scene state))
+                                 (= :game-over (:scene state)))
+                         (util/defer restart!))
+                       state)
     :door-entered (do
                     (sound/play! :door false)
                     (util/defer change-level!)
@@ -144,6 +144,7 @@
     :win-game (do (util/defer game-won!)
                   state)
     :player-dead (do (when (not= :game-over (:scene state))
+                       (sound/play! :death false)
                        (util/defer game-over!))
                      state)
     :eggs-fertilized (do

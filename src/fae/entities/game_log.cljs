@@ -31,9 +31,6 @@
    :z-index  1
 
    :events {:log-entry-posted (fn [p _state {msg :msg}]
-                                (println "GOT" msg)
-                                (update p :log (fn [log] (let [x (vec (take-last 8 (conj log msg)))]
-                                                           (println x)
-                                                           x))))}
+                                (update p :log (fn [log] (vec (take-last 8 (conj log msg))))))}
    :init     (fn [p _state] p)
    :update update!})

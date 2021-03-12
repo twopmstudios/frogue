@@ -55,7 +55,7 @@
   (set! js/PIXI.settings.SCALE_MODE js/PIXI.SCALE_MODES.NEAREST) ;; allows chunky pixels
   (assets/load! mount-root)
   (sound/register!)
-  (sound/change-music! :title))
+  (sound/play-music-with-intro! :title-intro :title))
 
 (defonce app (init!))
 

@@ -64,6 +64,7 @@
 
 (defn check-dead [p]
   (when (<= (get-in p [:stats :eggs]) 0)
+
     (e/trigger-event! :player-dead))
 
   p)

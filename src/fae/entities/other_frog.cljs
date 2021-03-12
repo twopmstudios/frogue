@@ -4,6 +4,7 @@
    [fae.events :as events]
    [fae.entities :as entities]
    [fae.world :as world]
+   [fae.sound :as sound]
    [fae.behavior.id :as id]
    [fae.behavior.movement :as move]
    [fae.behavior.standard :as standard]
@@ -27,6 +28,7 @@
       (do
         (events/trigger-event! :log-entry-posted {:msg "You bump & grind with the frog"})
         (events/trigger-event! :log-entry-posted {:msg "Your eggs feel... uh... fertile"})
+        (sound/play! :eggs false)
         (events/trigger-event! :eggs-fertilized)
         (entities/remove-entity! (:id frog))
         frog)
