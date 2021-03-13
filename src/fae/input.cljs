@@ -1,10 +1,13 @@
 (ns fae.input
   (:require
    [fae.events :as e]
+   [clojure.string :as string]
    [fae.print :as print]
    [fae.sound :as sound]
    [fae.game :as game]
    [fae.state :as s]))
+
+(string/lower-case "AAA")
 
 
 ;; determine which key pressed, what event it triggers and call actor handlers
@@ -17,11 +20,11 @@
         dispatch (fn [event-name]
                    (.preventDefault ev)
                    (e/trigger-event! event-name))]
-    (case key
-      "ArrowUp" (dispatch :move-up-pressed)
-      "ArrowDown" (dispatch :move-down-pressed)
-      "ArrowRight" (dispatch :move-right-pressed)
-      "ArrowLeft" (dispatch :move-left-pressed)
+    (case (string/lower-case key)
+      "arrowup" (dispatch :move-up-pressed)
+      "arrowdown" (dispatch :move-down-pressed)
+      "arrowright" (dispatch :move-right-pressed)
+      "arrowleft" (dispatch :move-left-pressed)
       "m" (sound/toggle-mute!)
       "w" (dispatch :tongue-up-pressed)
       "a" (dispatch :tongue-left-pressed)
